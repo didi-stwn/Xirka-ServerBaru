@@ -9,6 +9,8 @@ class Daftarruangan extends Component{
     terminalid: '',
     namaruangan:'',
     instansi:'',
+    datasalah: false,
+    databenar: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -32,12 +34,22 @@ class Daftarruangan extends Component{
       body: request,
       headers: he 
     })
-    window.location.reload();
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
+      }
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
   }
     
 
 
     render(){
+      const {databenar,datasalah} = this.state
         return (
         <div>
           <div className="kotakfilter"> 
@@ -56,6 +68,19 @@ class Daftarruangan extends Component{
                 <label> Instansi </label> <br></br>
                 <input name="instansi" onChange={this.handleChange} className="inputformruanganinstansi" type="text" placeholder="Instansi" required></input>
               </div> 
+              
+              {
+                databenar && 
+                <p className="texthijau">*Data berhasil disimpan</p>
+              }
+              {
+                datasalah &&
+                <p className="textmerah">*Data yang diinput salah</p>
+              }
+              { 
+                (databenar===false && datasalah===false) &&
+                <p className="texthijau">&emsp;</p>
+              }
               
               <div className="kotaksubmitruangan">
                 <input className="submitformlogpintu" type="submit" value="Add"></input>

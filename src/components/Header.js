@@ -26,6 +26,9 @@ class Header extends Component {
         function Laporan(){
             return(<span><b>Laporan</b></span>)
         }
+        function Client(){
+            return(<span><b>Client</b></span>)
+        }
         function Home(){
             return(<span><b>Home</b></span>)
         }
@@ -44,6 +47,7 @@ class Header extends Component {
                             <Route path="/pengguna" component={Pengguna} />
                             <Route path="/ruangan" component={Ruangan} />
                             <Route path="/laporan" component={Laporan} />
+                            <Route path="/client" component={Client} />
                             <Route exact path="/" component={Home} />
                         </Switch>
                         <span>

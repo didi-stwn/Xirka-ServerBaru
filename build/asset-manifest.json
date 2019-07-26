@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/static/css/main.289b7449.chunk.css",
+    "main.js": "/static/js/main.f863ceef.chunk.js",
+    "main.js.map": "/static/js/main.f863ceef.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
+    "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
+    "static/css/2.427954cb.chunk.css": "/static/css/2.427954cb.chunk.css",
+    "static/js/2.91fcd3e2.chunk.js": "/static/js/2.91fcd3e2.chunk.js",
+    "static/js/2.91fcd3e2.chunk.js.map": "/static/js/2.91fcd3e2.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.92c72c2659f1ae898509198cb0ce0bc3.js": "/precache-manifest.92c72c2659f1ae898509198cb0ce0bc3.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.427954cb.chunk.css.map": "/static/css/2.427954cb.chunk.css.map",
+    "static/css/main.289b7449.chunk.css.map": "/static/css/main.289b7449.chunk.css.map",
+    "static/media/mdb.css": "/static/media/arrow_right.8ef6a08c.svg",
+    "static/media/all.min.css": "/static/media/fa-solid-900.f14c3b2f.ttf",
+    "static/media/font-awesome.min.css": "/static/media/fontawesome-webfont.fee66e71.woff",
+    "static/media/logoxirka.png": "/static/media/logoxirka.65e90470.png",
+    "static/media/_all-skins.min.css": "/static/media/logoxirkawarna.6df410d1.png"
+  }
+}

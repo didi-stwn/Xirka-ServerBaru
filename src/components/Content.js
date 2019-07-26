@@ -22,16 +22,14 @@ class Content extends Component {
     componentDidMount(){
       fetch('http://192.168.2.7:3000/login', {
         method: 'post',
-        body: 'username=admin&password=bandung123',
+        body: atob("dXNlcm5hbWU9YWRtaW4mcGFzc3dvcmQ9YmFuZHVuZzEyMw=="),
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
       })
       .then (response=>response.json())
       .then (data => this.setState({key: data.token}))
     
-      let username = 'admin';
-      let password = 'bandung123';
       let h = new Headers();
-      h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+      h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
       fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit, {
         method: 'GET',
         headers: h

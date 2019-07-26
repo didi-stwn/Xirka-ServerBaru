@@ -27,7 +27,14 @@ class Pengguna extends Component{
           method: 'delete',
           headers: he 
         })
-        window.location.reload();
+        .then(response=>{
+          if (response.ok){
+            window.alert("Data berhasil dihapus")
+          }
+          else{
+            window.alert("Data tidak berhasil dihapus")
+          }
+        })
       }
     }
 
@@ -36,6 +43,17 @@ class Pengguna extends Component{
     }
             
     componentDidMount(){
+      let he= new Headers()
+      let token = this.props.token
+      he.append ('x-access-token', token)
+      fetch('http://192.168.2.7:3000/card', {
+        method: 'GET',
+        headers: he
+      })
+      .then(response=>response.json())
+      .then(data => this.setState({isidata: data}))    
+    }
+    refresh(){
       let he= new Headers()
       let token = this.props.token
       he.append ('x-access-token', token)
@@ -158,6 +176,13 @@ class Pengguna extends Component{
                       <span> Pengguna </span>
                     </div>
                   </Link>
+                  <span>
+                    <a onClick={() => this.refresh()}>
+                      <div className="daftar2">
+                        <i className="fa fa-refresh"></i>
+                      </div>
+                    </a>
+                  </span>
                 </div>
                 <div className="isitabel">
                     <MDBDataTable

@@ -36,7 +36,7 @@ export default class Login extends React.Component {
             else{
                 fetch('http://192.168.2.7:3000/login', {
                     method: 'post',
-                    body: 'username=admin&password=bandung123',
+                    body: atob("dXNlcm5hbWU9YWRtaW4mcGFzc3dvcmQ9YmFuZHVuZzEyMw=="),
                     headers: { 'Content-type': 'application/x-www-form-urlencoded' }
                 })
                 .then (response => response.json())
@@ -69,6 +69,7 @@ export default class Login extends React.Component {
     }
     
     render(){
+        sessionStorage.removeItem("login");
         document.title="Login"
         const {gagal} = this.state;
         return (

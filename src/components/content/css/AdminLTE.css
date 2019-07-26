@@ -2308,6 +2308,15 @@ a:focus {
   z-index: 2;
 }
 
+.texthijau{
+  margin-top: 10px;
+  color: green;
+}
+.textmerah{
+  margin-top: 10px;
+  color: red;
+}
+
 .kotakinputruangantermid{
   margin-left: 0%;
   margin-top: 0px
@@ -2324,7 +2333,7 @@ a:focus {
 }
 
 .kotaksubmitruangan{
-  margin-top: -42px;
+  margin-top: -90px;
   margin-left: 83%;
   margin-right: 7%;
 }
@@ -2372,7 +2381,7 @@ a:focus {
 
 @media (max-width:1035px){
   .kotaksubmitruangan{
-    margin-top: 20px;
+    margin-top: -10px;
     margin-left: 0%;
     display: block;
     width: 100%;
@@ -2438,7 +2447,7 @@ a:focus {
 }
 
 .kotaksubmitpengguna{
-  margin-top: -42px;
+  margin-top: -90px;
   margin-left: 83%;
   margin-right: 7%;
 }
@@ -2756,6 +2765,10 @@ a:focus {
 }
 
 .kotaksubmitlogpintu{
+  margin-top: -90px;
+  margin-left: 90%;
+}
+.kotaksubmitlogpintu2{
   margin-top: -42px;
   margin-left: 90%;
 }
@@ -2802,6 +2815,10 @@ a:focus {
     margin-top: -42px;
     margin-left: 90%;
   }
+  .kotaksubmitlogpintu2{
+    margin-top: -42px;
+    margin-left: 90%;
+  }
 }
 
 @media (max-width:865px){
@@ -2824,6 +2841,10 @@ a:focus {
     margin-top: -42px;
     margin-left: 83%;
   }
+  .kotaksubmitlogpintu2{
+    margin-top: -42px;
+    margin-left: 83%;
+  }
 }
 
 
@@ -2839,6 +2860,10 @@ a:focus {
     margin-top: 20px
   }
   .kotaksubmitlogpintu{
+    margin-top: 20px;
+    margin-left: 0%;
+  }
+  .kotaksubmitlogpintu2{
     margin-top: 20px;
     margin-left: 0%;
   }
@@ -3200,7 +3225,20 @@ a:focus {
   font-size: 15px;
   color: white;
   border: 2px solid #E43A34;
-  float: right;
+}
+.daftar2{
+  width: 30px;
+  text-align: center;
+  text-decoration: none;
+  height: 27px;
+  font-size: 15px;
+  margin-left: 125px;
+  margin-top: -25px;
+  color: #E43A34
+}
+
+.daftar2 :hover{
+  color: rgb(228, 57, 51, 0.5)
 }
 
 .daftar > i {
@@ -3333,6 +3371,11 @@ a:focus {
 }
 
 .kotaksubmitlaporan{
+  margin-top: -90px;
+  margin-left: 76%;
+  margin-right: 14%;
+}
+.kotaksubmitlaporan2{
   margin-top: -42px;
   margin-left: 76%;
   margin-right: 14%;
@@ -3387,6 +3430,11 @@ a:focus {
     margin-left: 0%;
     width: 30%;
   }
+  .kotaksubmitlaporan2{
+    margin-top: 20px;
+    margin-left: 0%;
+    width: 30%;
+  }
 
   .kotakprintpdflaporan{
     width: 30%;
@@ -3434,6 +3482,9 @@ a:focus {
 
 @media (max-width:463px){
   .kotaksubmitlaporan{
+    width: 100%;
+  }
+  .kotaksubmitlaporan2{
     width: 100%;
   }
   .kotakprintpdflaporan{

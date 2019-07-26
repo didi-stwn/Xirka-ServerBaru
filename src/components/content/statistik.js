@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import Chart from 'react-google-charts';
-import {withRouter} from 'react-router-dom';
+import {Link,withRouter} from 'react-router-dom';
 
 class Statistik extends Component{
     constructor(props) {
@@ -18,10 +18,8 @@ class Statistik extends Component{
       }
 
       componentDidMount(){
-        let username = 'admin';
-        let password = 'bandung123';
         let h = new Headers();
-        h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+        h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
         fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit, {
         method: 'GET',
         headers: h
@@ -95,16 +93,14 @@ class Statistik extends Component{
     
         filter = inputruang+starttime+endtime+inputstatus;
         
-        let username = 'admin';
-        let password = 'bandung123';
         let h = new Headers();
-        h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+        h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
         fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+filter, {
         method: 'GET',
         headers: h
         })
         .then(response=>response.json())
-        .then(data => this.setState({isidata: data.results}))     
+        .then(data =>this.setState({isidata: data.results}))
       }
 
     render(){
@@ -121,10 +117,10 @@ class Statistik extends Component{
         
         for (var i=0; i<isidata.length; i++){
             if (isidata[i].lockstatus===0){
-              checkin = checkin + 1
+                checkin = checkin + 1
             }
             else if (isidata[i].lockstatus===1) {
-              checkout = checkout + 1
+                checkout = checkout + 1
             }
             for (var j=0; j<=pengguna.length; j++){
                 if (isidata[i].scard_id === pengguna[j]){
@@ -238,42 +234,42 @@ class Statistik extends Component{
                 <div className="kotakcheckin">
                     <span className="kotakangkastat" >{checkin}</span>
                     <span className="kotakhalamanstat">CHECK IN</span>
-                    <a href="/logpintu">
+                    <Link to="/logpintu">
                         <div className="kkotakstat"> 
                             <span> View More </span> 
                             <i className="fa fa-chevron-right"></i>
                         </div>
-                    </a>
+                    </Link>
                 </div>
                 <div className="kotakcheckout">
                     <span className="kotakangkastat" >{checkout}</span>
                     <span className="kotakhalamanstat">CHECK OUT</span>
-                    <a href="/logpintu">
+                    <Link to="/logpintu">
                         <div className="kkotakstat"> 
                             <span> View More </span> 
                             <i className="fa fa-chevron-right"></i>
                         </div>
-                    </a>
+                    </Link>
                 </div>
                 <div className="kotakpengguna">
                     <span className="kotakangkastat" >{pengguna.length}</span>
                     <span className="kotakhalamanstat">PENGGUNA</span>
-                    <a href="/pengguna">
+                    <Link to="/pengguna">
                         <div className="kkotakstat"> 
                             <span> View More </span> 
                             <i className="fa fa-chevron-right"></i>
                         </div>
-                    </a>
+                    </Link>
                 </div>
                 <div className="kotakruangan">
                     <span className="kotakangkastat" >{ruangan.length}</span>
                     <span className="kotakhalamanstat">RUANGAN</span>
-                    <a href="/ruangan">
+                    <Link to="/ruangan">
                         <div className="kkotakstat"> 
                             <span> View More </span> 
                             <i className="fa fa-chevron-right"></i>
                         </div>
-                    </a>
+                    </Link>
                 </div>
                 <div className="kotakgrafik">
                     <div className="kotakisigrafik">

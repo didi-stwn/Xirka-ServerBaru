@@ -15,6 +15,7 @@ class Laporan extends Component{
           nim: '',
           startDate: '',
           endDate:'',
+          datasalah: false,
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -32,16 +33,23 @@ class Laporan extends Component{
              var filter
         
             filter = nim
-            let username = 'admin';
-            let password = 'bandung123';
             let h = new Headers();
-            h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+            h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
             fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+"&scard_id="+filter, {
             method: 'GET',
             headers: h
             })
             .then(response=>response.json())
-            .then(data => this.setState({isidata: data.results}))     
+            .then(data => {
+                if (data.code===200){
+                    this.setState({isidata: data.results})
+                    this.setState({periodeLaporan:true})
+                    this.setState({datasalah:false})
+                }    
+                else {
+                    this.setState({datasalah:true})
+                }
+            })     
         
             //mengambil instansi berdasarkan scard id
             let he= new Headers()
@@ -67,10 +75,10 @@ class Laporan extends Component{
             
             var dateArr = getDateArray(startDate, endDate);
             this.setState({getRangeDate:dateArr})
-            this.setState({periodeLaporan:true})
         }
 
     render(){
+        const {datasalah}= this.state
         sessionStorage.removeItem("login");
         function waktu(t){
             var tahun,bulan,tanggal,tgl,hari,date;
@@ -449,7 +457,14 @@ class Laporan extends Component{
                                 <label> End Date </label> <br></br>
                                 <input name="endDate" onChange={this.handleChange} className="inputformlaporanend" type="date" required></input>
                             </div>
-                            
+                            {
+                            datasalah &&
+                            <p className="textmerah">*Data yang diinput salah</p>
+                            }
+                            { 
+                            (datasalah===false) &&
+                            <p className="texthijau">&emsp;</p>
+                            }
                             <div className="kotaksubmitlaporan">
                                 <input className="submitformlogpintu2" type="submit" value="Find"></input>
                             </div>
@@ -550,7 +565,7 @@ class Laporan extends Component{
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {getRangeDate.map(isi =>(
+                                                { periodeLaporan && getRangeDate.map(isi =>(
                                                 <tr className="tabellaporanbody" key={isi}>
                                                     <td className ="laporanno">{i++}</td>
                                                     <td className ="laporanhari">{waktu(isi)}</td>
@@ -593,7 +608,7 @@ class Laporan extends Component{
                                 <input name="endDate" onChange={this.handleChange} className="inputformlaporanend" type="date" required></input>
                             </div>
                             
-                            <div className="kotaksubmitlaporan">
+                            <div className="kotaksubmitlaporan2">
                                 <input className="submitformlogpintu2" type="submit" value="Find"></input>
                             </div>
     

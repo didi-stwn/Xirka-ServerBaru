@@ -16,6 +16,7 @@ class Logpintu extends Component{
       terminalID: '',
       startDate: '',
       endDate: '',
+      datasalah: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -87,16 +88,22 @@ class Logpintu extends Component{
 
     filter = scardid+termid+starttime+endtime;
 
-    let username = 'admin';
-    let password = 'bandung123';
     let h = new Headers();
-    h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+    h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
     fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+filter+"&ob=1", {
     method: 'GET',
     headers: h
     })
     .then(response=>response.json())
-    .then(data => this.setState({isidata: data.results}))
+    .then(data => {
+      if (data.code===200){
+          this.setState({isidata: data.results})
+          this.setState({datasalah:false})
+      }    
+      else {
+          this.setState({datasalah:true})
+      }
+    }) 
     
     //mengambil instansi berdasarkan scard id
     let he= new Headers()
@@ -119,10 +126,38 @@ class Logpintu extends Component{
   }
 
   componentDidMount(){
-    let username = 'admin';
-    let password = 'bandung123';
     let h = new Headers();
-    h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+    h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
+    fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+"&ob=1", {
+    method: 'GET',
+    headers: h
+    })
+    .then(response=>response.json())
+    .then(data => this.setState({isidata: data.results}))
+    //mengambil instansi berdasarkan scard id
+        
+    let he= new Headers()
+    let token = this.props.token
+    he.append ('x-access-token', token)
+    fetch('http://192.168.2.7:3000/card', {
+    method: 'GET',
+    headers: he
+    })
+    .then(response=>response.json())
+    .then(data => this.setState({ins: data}))
+    
+    //mengambil ruangan berdasarkan terminal id
+    fetch('http://192.168.2.7:3000/terminal', {
+    method: 'GET',
+    headers: he
+    })
+    .then(response=>response.json())
+    .then(data => this.setState({room: data}))
+  }
+  
+  refresh(){
+    let h = new Headers();
+    h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
     fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+"&ob=1", {
     method: 'GET',
     headers: h
@@ -151,6 +186,7 @@ class Logpintu extends Component{
   }
 
 render(){
+  const {datasalah} = this.state
   sessionStorage.removeItem("login");
   //fungsi status
   function lockstatus(e){
@@ -348,6 +384,14 @@ render(){
               <input name="endDate" onChange={this.handleChange} className="inputformlogpintuend" type="date"></input>
             </div>
             
+            {
+              datasalah &&
+              <p className="textmerah">*Data yang diinput salah</p>
+            }
+            { 
+              (datasalah===false) &&
+              <p className="texthijau">&emsp;</p>
+            }
             <div className="kotaksubmitlogpintu">
               <input className="submitformlogpintu" type="submit" value="Filter"></input>
             </div>
@@ -364,6 +408,13 @@ render(){
                     <span> Log Pintu </span>
                   </div>
                 </Link>
+                <span>
+                  <a onClick={() => this.refresh()}>
+                    <div className="daftar2">
+                      <i className="fa fa-refresh"></i>
+                    </div>
+                  </a>
+                </span>
             </div>
             <div className="isitabel">
               <MDBDataTable
@@ -407,7 +458,7 @@ render(){
               <input name="endDate" onChange={this.handleChange} className="inputformlogpintuend" type="date"></input>
             </div>
             
-            <div className="kotaksubmitlogpintu">
+            <div className="kotaksubmitlogpintu2">
               <input className="submitformlogpintu" type="submit" value="Filter"></input>
             </div>
           </form> 

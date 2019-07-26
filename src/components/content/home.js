@@ -4,6 +4,7 @@ import {withRouter} from 'react-router-dom'
 
 class Home extends Component{
     render(){
+        sessionStorage.removeItem("login");
         return (
         <div>
             <div className="kotakhomexirka"> 

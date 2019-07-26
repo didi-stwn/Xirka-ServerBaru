@@ -9,6 +9,8 @@ class Daftarlogpintu extends Component{
         terminalid:'',
         checkedtm:'',
         lockstatus:'',
+        datasalah: false,
+        databenar: false,
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -55,20 +57,28 @@ class Daftarlogpintu extends Component{
         checkedtminput = tahun+"-"+bulan+"-"+tanggal+" "+jam+":"+menit+":00.000000"
         hasil = 'term-id='+terminalid+'&nim='+nim+'&checkedtm='+checkedtminput+'&lockstatus='+lockstatus;
         
-        let username = 'admin';
-        let password = 'bandung123';
         let h = new Headers();
         h.append ('Content-Type', 'application/x-www-form-urlencoded')
-        h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
+        h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
         fetch('https://192.168.2.7/smartlock/api/v1/addlog.json', {
             method: 'POST',
             body: hasil,
             headers: h
         })
-        window.location.reload();
+        .then(response => {
+            if (response.ok){
+              this.setState({databenar:true})
+              this.setState({datasalah:false})
+            }
+            else {
+              this.setState({datasalah:true})
+              this.setState({databenar:false})
+            }
+        })
     }
 
     render(){
+        const {databenar,datasalah} = this.state
         return (
             <div>
                 <div className="paddingtop30px">
@@ -99,7 +109,18 @@ class Daftarlogpintu extends Component{
                             <option value="3"> Sakit </option>
                         </select>
                     </div>
-                    
+                    {
+                        databenar && 
+                        <p className="texthijau">*Data berhasil disimpan</p>
+                    }
+                    {
+                        datasalah &&
+                        <p className="textmerah">*Data yang diinput salah</p>
+                    }
+                    { 
+                        (databenar===false && datasalah===false) &&
+                        <p className="texthijau">&emsp;</p>
+                    }
                     <div className="kotaksubmitpengguna">
                         <input className="submitformlogpintu" type="submit" value="Add"></input>
                     </div>
