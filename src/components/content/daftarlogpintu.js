@@ -5,133 +5,98 @@ class Daftarlogpintu extends Component{
     constructor(props) {
         super(props);
         this.state = {
-        nim: '',
-        terminalid:'',
-        checkedtm:'',
-        lockstatus:'',
+        nimc:'',
+        ruanganc:'',
+        methodc:'',
         datasalah: false,
         databenar: false,
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-    handleChange(e) {
+      }
+      handleChange(e) {
         const { name, value } = e.target;
         this.setState({ [name]: value });
-    }
-  
-    handleSubmit(e){
+      }
+      
+      handleSubmit(e){
         e.preventDefault();
-        const {nim,terminalid,checkedtm,lockstatus} = this.state;
-        var hasil, checkedtminput, t,tahun, b, bulan, ta, tanggal, j, jam, m, menit;
-        t = new Date(checkedtm)
-        tahun = String(t.getFullYear());
-        b = t.getMonth() + 1;
-        if (b<=9){
-            bulan = "0"+String(b)
-        }
-        else {
-            bulan = String(b)
-        }
-        ta = t.getDate();
-        if (ta<=9){
-            tanggal = "0"+String(ta)
-        }
-        else {
-            tanggal = String(ta)
-        }
-        j = t.getHours()
-        if (j<=9){
-            jam = "0"+String(j)
-        }
-        else {
-            jam = String(j)
-        }
-        m = t.getMinutes()
-        if (m<=9){
-            menit = "0"+String(m)
-        }
-        else {
-            menit = String(m)
-        }
-        checkedtminput = tahun+"-"+bulan+"-"+tanggal+" "+jam+":"+menit+":00.000000"
-        hasil = 'term-id='+terminalid+'&nim='+nim+'&checkedtm='+checkedtminput+'&lockstatus='+lockstatus;
-        
-        let h = new Headers();
-        h.append ('Content-Type', 'application/x-www-form-urlencoded')
-        h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
-        fetch('https://192.168.2.7/smartlock/api/v1/addlog.json', {
-            method: 'POST',
-            body: hasil,
-            headers: h
+        const {nimc,ruanganc,methodc} = this.state
+        fetch('http://192.168.2.7:8020/doorlog/addlog/', {
+          method: 'post',
+          headers :{
+            "Authorization" : "Bearer "+ sessionStorage.name,
+            "Content-Type" : "application/json"
+          },
+          body: JSON.stringify({
+            nim: nimc,
+            ruangan: ruanganc,
+            method:methodc
+          })
         })
         .then(response => {
-            if (response.ok){
-              this.setState({databenar:true})
-              this.setState({datasalah:false})
-            }
-            else {
-              this.setState({datasalah:true})
-              this.setState({databenar:false})
-            }
+          if (response.ok){
+            this.setState({databenar:true})
+            this.setState({datasalah:false})
+          }
+          else {
+            this.setState({datasalah:true})
+            this.setState({databenar:false})
+          }
         })
-    }
-
-    render(){
+      }
+    
+      render(){
         const {databenar,datasalah} = this.state
         return (
-            <div>
-                <div className="paddingtop30px">
+          <div>
+            <div className="kotakfilter"> 
+              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
+                
+                <div className="kotakinputpenggunanim">
+                  <label> NIM </label> <br></br>
+                  <input name="nimc" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="ID Ruangan" required></input>
                 </div>
-                <div className="kotakfilter2"> 
-                    <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
-                    <div className="kotakinputlogpintunim">
-                        <label> NIM </label> <br></br>
-                        <input name="nim" onChange={this.handleChange} className="inputformlogpintunim" type="text" placeholder="NIM" required ></input>
-                    </div>
-                    
-                    <div className="kotakinputlogpintuterminalid">
-                        <label>Terminal ID </label> <br></br>
-                        <input name="terminalid" onChange={this.handleChange} className="inputformlogpintuterminalid" type="text" placeholder="Terminal Id" required ></input>
-                    </div>
-
-                    <div className="kotakinputlogpintucheckedtm">
-                        <label> Checked Time </label> <br></br>
-                        <input name="checkedtm" onChange={this.handleChange} className="inputformlogpintucheckedtm" type="datetime-local" required></input>
-                    </div> 
-                    
-                    <div className="kotakinputlogpintustatus">
-                        <label> Status </label> <br></br>
-                        <select name="lockstatus" onChange={this.handleChange} className="inputformlogpintustatus" required>
-                            <option value="0"> Check In </option>
-                            <option value="1"> Check Out </option>
-                            <option value="2"> Izin </option>
-                            <option value="3"> Sakit </option>
-                        </select>
-                    </div>
-                    {
-                        databenar && 
-                        <p className="texthijau">*Data berhasil disimpan</p>
-                    }
-                    {
-                        datasalah &&
-                        <p className="textmerah">*Data yang diinput salah</p>
-                    }
-                    { 
-                        (databenar===false && datasalah===false) &&
-                        <p className="texthijau">&emsp;</p>
-                    }
-                    <div className="kotaksubmitpengguna">
-                        <input className="submitformlogpintu" type="submit" value="Add"></input>
-                    </div>
-
-                    <div className="kotakcancelpengguna">
-                        <Link to="/logpintu"> <span className="cancelformpengguna">Cancel</span></Link>
-                    </div>
-                    </form> 
+    
+                <div className="kotakinputpenggunanama">
+                  <label> Nama Ruangan</label> <br></br>
+                  <input name="ruanganc" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Nama Ruangan" required ></input>
+                </div> 
+                
+                <div className="kotakinputlogpintustatus">
+                    <label> Method </label> <br></br>
+                    <select name="methodc" onChange={this.handleChange} className="inputformlogpintustatus" required>
+                        <option value="1"> Contact </option>
+                        <option value="2"> Contactless </option>
+                        <option value="3"> Finger print </option>
+                        <option value="4"> Admin </option>
+                    </select>
                 </div>
+                {
+                  databenar && 
+                  <p className="texthijau">*Data berhasil disimpan</p>
+                }
+                {
+                  datasalah &&
+                  <p className="textmerah">*Data yang diinput salah</p>
+                }
+                { 
+                  (databenar===false && datasalah===false) &&
+                  <p className="texthijau">&emsp;</p>
+                }
+                <div className="kotaksubmitpengguna">
+                  <input className="submitformlogpintu" type="submit" value="Add"></input>
+                </div>
+    
+                <div className="kotakcancelpengguna">
+                  <Link to="/logpintu"> <span className="cancelformpengguna">Cancel</span></Link>
+                </div>
+              </form> 
             </div>
+            <div className="paddingtop30px">
+            </div>
+          </div>
         )
-    } 
+      }  
 }
 export default withRouter(Daftarlogpintu);

@@ -11,92 +11,53 @@ import './components/content/css/font-awesome.min.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
-import Modal from 'react-awesome-modal';
-// import './components/content/js/581d5d54d2.js';
-// import './components/content/js/adminlte.min.js';
-// import './components/content/js/bootstrap.min.js';
-// import './components/content/js/dashboard2.js';
-// import './components/content/js/demo.js';
-// import './components/content/js/jquery.min.js';
-// import './components/content/js/jquery.slimscroll.min.js';
-// import './components/content/js/jquery.sparkline.min.js';
 
 class App extends Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-          dataclient: '',
-      };
-    }
-
-    componentDidMount(){
-      fetch('http://192.168.2.7:3000/login', {
-        method: 'post',
-        body: atob("dXNlcm5hbWU9YWRtaW4mcGFzc3dvcmQ9YmFuZHVuZzEyMw=="),
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-        })
-        .then (response => response.json())
-        .then (data => {
-          let he= new Headers()
-          let token = data.token
-          he.append ('x-access-token', token)
-          fetch('http://192.168.2.7:3000/client', {
-            method: 'GET',
-            headers: he
-          })
-          .then(response=>response.json())
-          .then(data => this.setState({dataclient:data})) 
-        })
-    }
     render(){ 
-      const {dataclient} = this.state
-      while (dataclient===''){
-        return(
-          <div className="loadingdata2"> 
-            <i className="fa fa-spinner fa-pulse" style={{fontSize:"150px", color:"#E43A34"}}> </i>
-          </div> 
-        )
-      }
+      // //fungsi refresh token
+      // function refreshToken(){
+      //     fetch('http://192.168.2.7:8020/api-token-refresh/', {
+      //       method: 'post',
+      //       headers :{"Content-Type" : "application/json"},
+      //       body: JSON.stringify({
+      //           token: sessionStorage.name,
+      //           })
+      //     })
+      //     .then (response =>response.json())  
+      //     .then (response =>{
+      //     if (response.token==="This field is required."){
+      //       sessionStorage.removeItem("name")
+      //     }
+      //     else{
+      //       sessionStorage.setItem("name",response.token)
+      //     }
+      //   })
+      // }
 
-      var dataclientt
-      for (var i=0;i<dataclient.length; i++){
-        if (dataclient[i].name===sessionStorage.message){
-          dataclientt = sessionStorage.message
-          break
-        }
-        else {
-          dataclientt = "login"
-        }
-      }
-
-      if (sessionStorage.message==="admin"){
+      // // kalau token ga ada
+      // if ((sessionStorage.name==="undefined")||(sessionStorage.name===undefined)){
+      //   return (
+      //     <div>
+      //       <Redirect to="/login" />
+      //       <Route path="/login" component={Login}/>
+      //     </div>
+      //   )
+      // }
+      
+      // //kalau token ada
+      // else {
+      //   //fungsi untuk memanggil refresh token 1 detik setelah ada sesuatu yang di klik
+      //   setTimeout(function(){refreshToken()},1000)
+      //   //fungsi untuk memanggil refresh token tiap 590 detik
+      //   setInterval(function(){refreshToken()},590000)
         return(
           <div>
             <Route path="/" component={Header} />
             <Route path="/" component={SideBar} />
             <Route path="/" component={Content} />
-         </div>
-        )
-      }
-
-      else if (sessionStorage.message===dataclientt){
-        return(
-          <div>
-            <Route path="/" component={Header} />
-            <Route path="/" render={ () => <SideBar name={dataclientt}/> } />
-            <Route path="/" render={ () => <Content name={dataclientt}/> } />
-         </div>
-        )
-      }
-      
-      else {
-        return (
-          <div>
-            <Redirect to="/login" />
-            <Route path="/login" component={Login}/>
           </div>
-        )
-      }
+        ) 
+      // }
   }
 }
 

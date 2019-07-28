@@ -1,81 +1,157 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
 import {Route, Link,withRouter,Switch} from "react-router-dom";
-import Daftarpengguna from './daftarpengguna';
-import Editpengguna from './editpengguna';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 
 class Pengguna extends Component{
-    
-    constructor(props) {
-      super(props);
-      this.state = {
+  constructor(props) {
+    super(props);
+    this.state = {
       isidata: [],
-      editID:'',
-      };
-    }
+      daftar: false,
+      edit:false,
+      nimc:'',
+      namac:'',
+      nimu:'',
+      namau:'',
+      datasalah: false,
+      databenar: false,
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmitDaftar = this.handleSubmitDaftar.bind(this);
+    this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
+  }
 
-    deleteData(e,f,g,h){
-      let key=String(e)
-      var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: Scard ID = " +e+", NIP/NIM= "+f+", Nama= "+g+", Instansi= "+h+" ?");
-      if (yes === true){
-        let he= new Headers()
-        let token = this.props.token
-        he.append ('x-access-token', token)
-        fetch('http://192.168.2.7:3000/card/'+key, {
-          method: 'delete',
-          headers: he 
-        })
-        .then(response=>{
-          if (response.ok){
-            window.alert("Data berhasil dihapus")
-          }
-          else{
-            window.alert("Data tidak berhasil dihapus")
-          }
-        })
+  handleChange(e) {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
+
+  handleSubmitDaftar(e){
+    e.preventDefault();
+    const {nimc,namac} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/registerUser/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        nim: nimc,
+        nama: namac
+      })
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
       }
-    }
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
+  }
 
-    editData(e){
-      this.setState({editID:e})
-    }
-            
-    componentDidMount(){
-      let he= new Headers()
-      let token = this.props.token
-      he.append ('x-access-token', token)
-      fetch('http://192.168.2.7:3000/card', {
-        method: 'GET',
-        headers: he
+  handleSubmitEdit(e){
+    e.preventDefault();
+    const {nimu,namau} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/editUser/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        nim: nimu,
+        name_update: namau
       })
-      .then(response=>response.json())
-      .then(data => this.setState({isidata: data}))    
-    }
-    refresh(){
-      let he= new Headers()
-      let token = this.props.token
-      he.append ('x-access-token', token)
-      fetch('http://192.168.2.7:3000/card', {
-        method: 'GET',
-        headers: he
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
+      }
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
+  }
+
+  componentWillMount(){
+    fetch('http://192.168.2.7:8020/doorlog/allusers/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      }
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+
+  componentDidUpdate(){
+    fetch('http://192.168.2.7:8020/doorlog/allusers/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      }
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list})) 
+  }
+
+  deleteData(e,f){
+    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e+", Nama= "+f);
+    if (yes === true){
+      fetch('http://192.168.2.7:8020/doorlog/deleteUser/', {
+        method: 'post',
+        headers :{
+          "Authorization" : "Bearer "+ sessionStorage.name,
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          nim: e
+          })
       })
-      .then(response=>response.json())
-      .then(data => this.setState({isidata: data}))    
+      .then(response=>{
+        if (response.ok){
+          window.alert("Data berhasil dihapus")
+        }
+        else{
+          window.alert("Data tidak berhasil dihapus")
+        }
+      })
     }
+  }
+
+  showDaftar(){
+    this.setState({daftar:true})
+  }
+  hideDaftar(){
+    this.setState({daftar:false})
+  }
+
+  showEdit(a){
+    this.setState({edit:true})
+    this.setState({nimu:a})
+  }
+  hideEdit(){
+    this.setState({edit:false})
+  }
 
   render(){
-    sessionStorage.removeItem("login");
-    var x=1;
+    const {daftar,edit,databenar,datasalah,nimu} = this.state
+    var x = 1;
     function no(i){
       var m=0
       var hasil=m+i
       return  hasil
     }
-    
-    let token = this.props.token
-    const dataadmin = {
+    const data = {
       columns: [
         {
           label: 'No',
@@ -83,23 +159,13 @@ class Pengguna extends Component{
           sort: 'asc',
         },
         {
-          label: 'Scard ID',
-          field: 'scardid',
+          label: 'NIM',
+          field: 'nim',
           sort: 'asc',
         },
         {
-          label: 'NIP/NIM',
-          field: 'nipnim',
-          sort: 'asc',
-        },
-        {
-          label: 'Nama',
-          field: 'nama',
-          sort: 'asc',
-        },
-        {
-          label: 'Instansi',
-          field: 'instansi',
+          label: 'Nama Pengguna',
+          field: 'namapengguna',
           sort: 'asc',
         },
         {
@@ -110,114 +176,123 @@ class Pengguna extends Component{
       rows: this.state.isidata.map(isi=>{
         return {
           no:no(x++),
-          scardid: isi.card_id,
-          nipnim:isi.nim,
-          nama:isi.name,
-          instansi: isi.instansi,
-          keterangan:<div className="editdelete"> <Link to="/pengguna/edit" onClick={() => this.editData(isi.card_id)}><i className="fa fa-pencil"></i></Link> | <a className="mousepointer" onClick={() => this.deleteData(isi.card_id,isi.card_id,isi.name,isi.instansi)}> <i className="fa fa-trash"></i></a> </div>
+          nim: isi.nim,
+          namapengguna:isi.nama,
+          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.nim)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.nim,isi.nama)}> <i className="fa fa-trash"></i></a> </div>
         }
       })
     };
-    var y = 1;
-    const dataclient = {
-      columns: [
-        {
-          label: 'No',
-          field: 'no',
-          sort: 'asc',
-        },
-        {
-          label: 'Scard ID',
-          field: 'scardid',
-          sort: 'asc',
-        },
-        {
-          label: 'NIP/NIM',
-          field: 'nipnim',
-          sort: 'asc',
-        },
-        {
-          label: 'Nama',
-          field: 'nama',
-          sort: 'asc',
-        },
-        {
-          label: 'Instansi',
-          field: 'instansi',
-          sort: 'asc',
-        }
-      ],
-      rows: this.state.isidata.map(isi=>{
-        return {
-          no:no(y++),
-          scardid: isi.card_id,
-          nipnim:isi.nim,
-          nama:isi.name,
-          instansi: isi.instansi,
-        }
-      })
-    };
-    const {editID}= this.state;
-    if (sessionStorage.message==="admin"){
-      return (              
-        <div>
-            <div>
-              <Switch>
-                <Route path="/pengguna/daftar" render={ () => <Daftarpengguna token={this.props.token} /> } />
-                <Route path="/pengguna/edit" render={ () => <Editpengguna token={this.props.token} editID={editID}/> } />
-              </Switch>
-            </div>
-           
-             <div className="box-footer">  
-                <div className="kotakdaftarruangan">
-                  <Link to="/pengguna/daftar">
-                    <div className="daftar">
-                      <i className="fa fa-plus"></i> 
-                      <span> Pengguna </span>
-                    </div>
-                  </Link>
-                  <span>
-                    <a onClick={() => this.refresh()}>
-                      <div className="daftar2">
-                        <i className="fa fa-refresh"></i>
-                      </div>
-                    </a>
-                  </span>
+    var aksidata
+    if (daftar===true){
+      aksidata = "show"
+    }
+    else if (edit===true){
+      aksidata = "show"
+    }
+    else {
+      aksidata = "hide"
+    }
+    return(
+      <div>
+          <div>
+            {daftar &&
+            
+            <div className="kotakdaftar"> 
+              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
+                {
+                  databenar && 
+                  <span className="texthijau">*Data berhasil disimpan</span>
+                }
+                {
+                  datasalah &&
+                  <span className="textmerah">*Data yang diinput salah</span>
+                }
+              
+                <div className="labelinputidruangan">
+                  <label> NIM </label><br></br>
+                  <input name="nimc" onChange={this.handleChange} className="inputidruangan" type="text" placeholder="NIM" required></input>
                 </div>
-                <div className="isitabel">
-                    <MDBDataTable
-                    responsive
-                    striped
-                    bordered
-                    small
-                    hover
-                    data={dataadmin}
-                    />
+
+                <div className="labelinputnamaruangan">
+                  <label> Nama Pengguna</label><br></br>
+                  <input name="namac" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Pengguna" required ></input>
                 </div> 
+
+                <div className="kotaksubmitpengguna">
+                  <input className="submitformlogpintu" type="submit" value="Add"></input>
+                </div>
+
+                <div className="kotakcancelpengguna">
+                  <a onClick={() => this.hideDaftar()}> <span className="cancelformpengguna">Cancel</span></a>
+                </div>
+                
+              </form> 
             </div>
-        </div>        
-      );
-    }
-    else{
-      return (              
-        <div>
-          <div className="box-footer">  
-            <div className="isitabel">
-              <MDBDataTable
-              responsive
-              striped
-              bordered
-              small
-              hover
-              data={dataclient}
-              />
-            </div> 
+            }
+            {
+              edit &&
+              <div className="kotakdaftar"> 
+                <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitEdit}>
+                  {
+                    databenar && 
+                    <span className="texthijau">*Data berhasil disimpan</span>
+                  }
+                  {
+                    datasalah &&
+                    <span className="textmerah">*Data yang diinput salah</span>
+                  }
+                
+                  <div className="labelinputidruangan">
+                    <label> NIM </label><br></br>
+                    <input onChange={this.handleChange} className="inputidruangan" type="text" placeholder="NIM" value={nimu} required></input>
+                  </div>
+
+                  <div className="labelinputnamaruangan">
+                    <label> Nama Pengguna</label><br></br>
+                    <input name="namau" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Pengguna" required ></input>
+                  </div> 
+
+                  <div className="kotaksubmitpengguna">
+                    <input className="submitformlogpintu" type="submit" value="Edit"></input>
+                  </div>
+
+                  <div className="kotakcancelpengguna">
+                    <a onClick={() => this.hideEdit()}> <span className="cancelformpengguna">Cancel</span></a>
+                  </div>
+                  
+                </form> 
+              </div>
+            }
           </div>
-        </div>        
-      );
-    }
-    
-  }
+          { (daftar===false)&&(edit===false)&&
+          <div className="kotakdaftarruangan">
+                <a onClick={() => this.showDaftar()}>
+                  <div className="daftar">
+                    <i className="fa fa-plus"></i> 
+                    <span><b>Pengguna</b></span>
+                  </div>
+                </a>
+          </div>
+          }
+          <div id={aksidata} className="kotakdata">
+              <div className="isitabel">
+                <MDBDataTable
+                responsive
+                displayEntries={false}
+                info={false}
+                paging={false}
+                striped
+                bordered
+                small
+                hover
+                theadColor={""}
+                data={data}
+                />
+              </div>  
+          </div>
+      </div>
+    )
+  }  
 }
 
 export default withRouter(Pengguna);

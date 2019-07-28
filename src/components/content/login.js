@@ -22,50 +22,25 @@ export default class Login extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         const {username, password} = this.state
-        let h= new Headers()
-        h.append ('Authorization', 'Basic ' + btoa(username + ':' + password))
-        fetch('https://192.168.2.7/smartlock/api/v1/login/', {
-           method: 'GET',
-           headers: h
+        fetch('http://192.168.2.7:8020/api-token-auth/', {
+        method: 'post',
+        headers :{"Content-Type" : "application/json"},
+        body: JSON.stringify({
+            username: username,
+            password: password
+            })
         })
-        .then(response => {
-            if(response.status === 200) {
-                sessionStorage.setItem("message","admin")
-                window.location.reload()
+        .then (response =>response.json())  
+        .then (response =>{
+            if (response.token===undefined){
+                this.setState({gagal:true})
             }
             else{
-                fetch('http://192.168.2.7:3000/login', {
-                    method: 'post',
-                    body: atob("dXNlcm5hbWU9YWRtaW4mcGFzc3dvcmQ9YmFuZHVuZzEyMw=="),
-                    headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-                })
-                .then (response => response.json())
-                .then (data => {
-                    let he= new Headers()
-                    let token = data.token
-                    he.append ('x-access-token', token)
-                    fetch('http://192.168.2.7:3000/client', {
-                        method: 'GET',
-                        headers: he
-                    })
-                    .then(response=>response.json())
-                    .then(data => {
-                        var j=0;
-                        for (var i=0;i<data.length; i++){
-                            if ((username===data[i].username)&&(password===data[i].password)){
-                                sessionStorage.setItem("message",data[i].name)
-                                window.location.reload()
-                                j=1;
-                            }
-                        }
-                        if (j===0){
-                            this.setState({gagal:true})
-                        }
-                        
-                    }) 
-                })
+                sessionStorage.setItem("name",response.token)
+                window.location.reload()
             }
-        })        
+            
+        })
     }
     
     render(){

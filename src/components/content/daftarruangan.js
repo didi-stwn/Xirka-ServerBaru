@@ -6,9 +6,8 @@ class Daftarruangan extends Component{
   constructor(props) {
     super(props);
     this.state = {
-    terminalid: '',
-    namaruangan:'',
-    instansi:'',
+    idc:'',
+    namac:'',
     datasalah: false,
     databenar: false,
     };
@@ -22,17 +21,17 @@ class Daftarruangan extends Component{
   
   handleSubmit(e){
     e.preventDefault();
-    const {terminalid,namaruangan,instansi} = this.state
-    var request = 'terminal_id='+terminalid+'&room='+namaruangan+'&instansi='+instansi;
-    
-    let he= new Headers()
-    let token = this.props.token
-    he.append ('x-access-token', token)
-    he.append ('Content-type', 'application/x-www-form-urlencoded')
-    fetch('http://192.168.2.7:3000/terminal', {
+    const {idc,namac} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/registerRoom/', {
       method: 'post',
-      body: request,
-      headers: he 
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        id_ruangan: idc,
+        nama_ruangan: namac
+      })
     })
     .then(response => {
       if (response.ok){
@@ -45,58 +44,49 @@ class Daftarruangan extends Component{
       }
     })
   }
-    
 
+  render(){
+    const {idc,namac,databenar,datasalah} = this.state
+    return (
+      <div>
+        <div className="kotakfilter"> 
+          <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
+                
+            <div className="kotakinputpenggunanim">
+              <label> ID Ruangan </label> <br></br>
+              <input name="idc" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="ID Ruangan" required></input>
+            </div>
 
-    render(){
-      const {databenar,datasalah} = this.state
-        return (
-        <div>
-          <div className="kotakfilter"> 
-            <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
-              <div className="kotakinputruangantermid">
-                <label> Terminal ID </label> <br></br>
-                <input name="terminalid" onChange={this.handleChange} className="inputformruangantermid" type="text" placeholder="Terminal ID" required></input>
-              </div>
-              
-              <div className="kotakinputruangannama">
-                <label> Nama Ruangan </label> <br></br>
-                <input name="namaruangan" onChange={this.handleChange} className="inputformruangannama" type="text" placeholder="Nama Ruangan" required></input>
-              </div>
+            <div className="kotakinputpenggunanama">
+              <label> Nama Ruangan</label> <br></br>
+              <input name="namac" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Nama Ruangan" required ></input>
+            </div> 
+                
+            {
+              databenar && 
+              <p className="texthijau">*Data berhasil disimpan</p>
+            }
+            {
+              datasalah &&
+              <p className="textmerah">*Data yang diinput salah</p>
+            }
+            { 
+              (databenar===false && datasalah===false) &&
+              <p className="texthijau">&emsp;</p>
+            }
+            <div className="kotaksubmitpengguna">
+              <input className="submitformlogpintu" type="submit" value="Add"></input>
+            </div>
 
-              <div className="kotakinputruanganinstansi">
-                <label> Instansi </label> <br></br>
-                <input name="instansi" onChange={this.handleChange} className="inputformruanganinstansi" type="text" placeholder="Instansi" required></input>
-              </div> 
-              
-              {
-                databenar && 
-                <p className="texthijau">*Data berhasil disimpan</p>
-              }
-              {
-                datasalah &&
-                <p className="textmerah">*Data yang diinput salah</p>
-              }
-              { 
-                (databenar===false && datasalah===false) &&
-                <p className="texthijau">&emsp;</p>
-              }
-              
-              <div className="kotaksubmitruangan">
-                <input className="submitformlogpintu" type="submit" value="Add"></input>
-              </div>
-
-              <div className="kotakcancelruangan">
-                <Link to="/ruangan"> <span className="cancelformruangan">Cancel</span></Link>
-              </div>
-            </form> 
-          </div>
+            <div className="kotakcancelpengguna">
+              <Link to="/ruangan"> <span className="cancelformpengguna">Cancel</span></Link>
+            </div>
+          </form> 
           <div className="paddingtop30px">
-
-          </div>
         </div>
-      
-        )
-    } 
+        </div>
+      </div>
+    )
+  } 
 }
 export default withRouter(Daftarruangan);

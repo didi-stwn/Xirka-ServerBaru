@@ -3,101 +3,93 @@ import {Link,withRouter} from 'react-router-dom';
 
 
 class Editruangan extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-        namaruangan:'',
-        instansi:'',
-        datasalah: false,
-        databenar: false,
-        };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-    handleChange(e) {
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
-    }
-    
-    handleSubmit(e){
-        e.preventDefault();
-        var {namaruangan,instansi} = this.state
-        var request = 'room='+namaruangan+'&instansi='+instansi;
-        let ID=this.props.editID
-        let he= new Headers()
-        let token = this.props.token
-        he.append ('x-access-token', token)
-        he.append ('Content-type', 'application/x-www-form-urlencoded')
-        fetch('http://192.168.2.7:3000/terminal/'+ID, {
-            method: 'PUT',
-            body: request,
-            headers: he 
-        })
-        .then(response => {
-          if (response.ok){
-            this.setState({databenar:true})
-            this.setState({datasalah:false})
-          }
-          else {
-            this.setState({datasalah:true})
-            this.setState({databenar:false})
-          }
-        })
-    }
-    
-
+  constructor(props) {
+    super(props);
+    this.state = {
+    idu:this.props.editID,
+    namau:'',
+    datasalah: false,
+    databenar: false,
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleChange(e) {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
+  
+  handleSubmit(e){
+    e.preventDefault();
+    const {idu,namau} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/editRoom/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        id_ruangan: idu,
+        nama_ruangan_baru: namau
+      })
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
+      }
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
+  }
 
     render(){
-        const {databenar,datasalah} = this.state
-        const editID = this.props.editID;
+      const {databenar,datasalah,idu} = this.state
         return (
-        <div>
-          <div className="kotakfilter"> 
-            <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
-              <div className="kotakinputruangantermid">
-                <label> Terminal ID </label> <br></br>
-                <input name="terminalid" className="inputformruangantermid" type="text" placeholder="Terminal ID" required value={editID}></input>
-              </div>
-              
-              <div className="kotakinputruangannama">
-                <label> Nama Ruangan </label> <br></br>
-                <input name="namaruangan" onChange={this.handleChange} className="inputformruangannama" type="text" placeholder="Nama Ruangan" required></input>
-              </div>
+            <div>
+              <div className="kotakfilter"> 
+                <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
 
-              <div className="kotakinputruanganinstansi">
-                <label> Instansi </label> <br></br>
-                <input name="instansi" onChange={this.handleChange} className="inputformruanganinstansi" type="text" placeholder="Instansi" required></input>
-              </div> 
+                  <div className="kotakinputpenggunanim">
+                    <label> NIM </label> <br></br>
+                    <input name="idu" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="Terminal Id" value={idu} required></input>
+                  </div>
 
-              {
-                databenar && 
-                <p className="texthijau">*Data berhasil disimpan</p>
-              }
-              {
-                datasalah &&
-                <p className="textmerah">*Data yang diinput salah</p>
-              }
-              { 
-                (databenar===false && datasalah===false) &&
-                <p className="texthijau">&emsp;</p>
-              }
-              
-              <div className="kotaksubmitruangan">
-                <input className="submitformlogpintu" type="submit" value="Edit"></input>
+                  <div className="kotakinputpenggunanama">
+                    <label> Nama </label> <br></br>
+                    <input name="namau" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Nama" required ></input>
+                  </div> 
+                  
+                  {
+                    databenar && 
+                    <p className="texthijau">*Data berhasil disimpan</p>
+                  }
+                  {
+                    datasalah &&
+                    <p className="textmerah">*Data yang diinput salah</p>
+                  }
+                  { 
+                    (databenar===false && datasalah===false) &&
+                    <p className="texthijau">&emsp;</p>
+                  }
+
+                  <div className="kotaksubmitpengguna">
+                    <input className="submitformlogpintu" type="submit" value="Edit"></input>
+                  </div>
+
+                  <div className="kotakcancelpengguna">
+                    <Link to="/ruangan"> <span className="cancelformpengguna">Cancel</span></Link>
+                  </div>
+                </form> 
               </div>
+              <div className="paddingtop30px">
 
-              <div className="kotakcancelruangan">
-                <Link to="/ruangan"> <span className="cancelformruangan">Cancel</span></Link>
               </div>
-            </form> 
-          </div>
-          <div className="paddingtop30px">
-
-          </div>
-        </div>
-      
+            </div>
         )
-    } 
+    }  
 }
 
 export default withRouter(Editruangan);

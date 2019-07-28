@@ -4,10 +4,7 @@ import {Switch,Route,withRouter,Link} from 'react-router-dom';
 
 class Header extends Component {
     isLogout(){
-        fetch('https://192.168.2.7/smartlock/api/v1/logout/', {
-           method: 'GET',
-        })
-        sessionStorage.removeItem("message");
+        sessionStorage.removeItem("name");
         window.location.reload()
     }
     render(){
@@ -26,8 +23,11 @@ class Header extends Component {
         function Laporan(){
             return(<span><b>Laporan</b></span>)
         }
-        function Client(){
-            return(<span><b>Client</b></span>)
+        function Ruanganuser(){
+            return(<span><b>Ruangan Pengguna</b></span>)
+        }
+        function Device(){
+            return(<span><b>Device</b></span>)
         }
         function Home(){
             return(<span><b>Home</b></span>)
@@ -47,7 +47,8 @@ class Header extends Component {
                             <Route path="/pengguna" component={Pengguna} />
                             <Route path="/ruangan" component={Ruangan} />
                             <Route path="/laporan" component={Laporan} />
-                            <Route path="/client" component={Client} />
+                            <Route path="/ruanganuser" component={Ruanganuser} />
+                            <Route path="/device" component={Device} />
                             <Route exact path="/" component={Home} />
                         </Switch>
                         <span>

@@ -1,486 +1,509 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
-import {withRouter,Route,Link} from 'react-router-dom';
-import Daftarlogpintu from './daftarlogpintu';
-
-
+import {withRouter,Route,Link,Switch} from 'react-router-dom';
 
 class Logpintu extends Component{
   constructor(props) {
     super(props);
     this.state = {
+      sort:'nim',
+      ascdsc:'asc',
+      pagesize: 10,
+      pagee: 1,
+      startDate: new Date('2019-07-13'),
+      endDate: new Date(),
+      searching:'',
       isidata: [],
-      ins: [],
-      room: [],
-      scardID: '',
-      terminalID: '',
-      startDate: '',
-      endDate: '',
+      daftar:false,
+      edit:false,
+      nimc:'',
+      ruanganc:'',
+      methodc:'',
+      nimu: '',
+      ruanganu:'',
+      dateu:'',
+      statusu:'',
       datasalah: false,
+      databenar: false,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
+    this.handleSubmitDaftar = this.handleSubmitDaftar.bind(this);    
   }
-
   handleChange(e) {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   }
-  
-  handleSubmit(e){
-    e.preventDefault();
-
-    const {scardID,terminalID,startDate,endDate} = this.state
-    var scardid
-    var termid
-    var starttime
-    var endtime
-    var filter
-
-    if (scardID===''){
-      scardid=''
-    }
-    else {
-      scardid='&scard_id='+scardID
-    }
-
-    if (terminalID===''){
-      termid=''
-    }
-    else {
-      termid='&term_id='+terminalID
-    }
-    if (startDate===''){
-      starttime=''
-    }
-    else {
-      starttime='&startdatetime='+startDate.substring(0,4)+startDate.substring(5,7)+startDate.substring(8,10)+'T000000+07:00'
-    }
-
-    if (endDate===''){
-      endtime=''
-    }
-    else {
-      endtime='&enddatetime='+endDate.substring(0,4)+endDate.substring(5,7)+endDate.substring(8,10)+'T000000+07:00'
-    }
-
-    if ((endDate==='')||(startDate==='')){
-      if ((startDate==='')&&(endDate!=='')){
-        starttime=''
-        endtime='&year='+endDate.substring(0,4)+'&month='+endDate.substring(5,7)+'&day='+endDate.substring(8,10)
-      }
-      else if ((endDate==='')&&(startDate!=='')){
-        starttime='&year='+startDate.substring(0,4)+'&month='+startDate.substring(5,7)+'&day='+startDate.substring(8,10)
-        endtime=''
-      }
-      else {
-        starttime=''
-        endtime=''
-      }
-    }
-
-    if (((endDate!=='')&&(startDate!==''))&&(('&year='+startDate.substring(0,4)+'&month='+startDate.substring(5,7)+'&day='+startDate.substring(8,10))===('&year='+endDate.substring(0,4)+'&month='+endDate.substring(5,7)+'&day='+endDate.substring(8,10)))){
-      starttime='&year='+startDate.substring(0,4)+'&month='+startDate.substring(5,7)+'&day='+startDate.substring(8,10)
-      endtime=''
-    }
-
-
-
-    filter = scardid+termid+starttime+endtime;
-
-    let h = new Headers();
-    h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
-    fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+filter+"&ob=1", {
-    method: 'GET',
-    headers: h
-    })
-    .then(response=>response.json())
-    .then(data => {
-      if (data.code===200){
-          this.setState({isidata: data.results})
-          this.setState({datasalah:false})
-      }    
-      else {
-          this.setState({datasalah:true})
-      }
-    }) 
-    
-    //mengambil instansi berdasarkan scard id
-    let he= new Headers()
-    let token = this.props.token
-    he.append ('x-access-token', token)
-    fetch('http://192.168.2.7:3000/card', {
-    method: 'GET',
-    headers: he
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({ins: data}))
-
-    //mengambil ruangan berdasarkan terminal id
-    fetch('http://192.168.2.7:3000/terminal', {
-    method: 'GET',
-    headers: he
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({room: data}))
-  }
-
   componentDidMount(){
-    let h = new Headers();
-    h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
-    fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+"&ob=1", {
-    method: 'GET',
-    headers: h
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({isidata: data.results}))
-    //mengambil instansi berdasarkan scard id
-        
-    let he= new Headers()
-    let token = this.props.token
-    he.append ('x-access-token', token)
-    fetch('http://192.168.2.7:3000/card', {
-    method: 'GET',
-    headers: he
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({ins: data}))
-    
-    //mengambil ruangan berdasarkan terminal id
-    fetch('http://192.168.2.7:3000/terminal', {
-    method: 'GET',
-    headers: he
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({room: data}))
-  }
-  
-  refresh(){
-    let h = new Headers();
-    h.append ('Authorization', 'Basic YWRtaW46YmFuZHVuZzEyMw==')
-    fetch('https://192.168.2.7/smartlock/api/v1/smartlockview.json?limit='+this.props.limit+"&ob=1", {
-    method: 'GET',
-    headers: h
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({isidata: data.results}))
-    //mengambil instansi berdasarkan scard id
-        
-    let he= new Headers()
-    let token = this.props.token
-    he.append ('x-access-token', token)
-    fetch('http://192.168.2.7:3000/card', {
-    method: 'GET',
-    headers: he
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({ins: data}))
-    
-    //mengambil ruangan berdasarkan terminal id
-    fetch('http://192.168.2.7:3000/terminal', {
-    method: 'GET',
-    headers: he
-    })
-    .then(response=>response.json())
-    .then(data => this.setState({room: data}))
-  }
-
-render(){
-  const {datasalah} = this.state
-  sessionStorage.removeItem("login");
-  //fungsi status
-  function lockstatus(e){
-    var hasil
-    if (e===0){
-      hasil = "Checked In"
-    }
-    else if (e===1) {
-      hasil = "Checked Out"
-    }
-    else if (e===2) {
-      hasil = "Izin"
-    }
-    else if (e===3) {
-      hasil = "Sakit"
-    }
-    return hasil
-  }
-  
-  //fungsi ambil nama dari pengguna
-  function nama(nim1,array){
-    var hasil
-    var i
-    for ( i=0; i<array.length; i++){
-      if (String(nim1)===array[i].card_id){
-        hasil = array[i].name
-        break
-      }
-      else {
-        hasil = 'Tidak Terdaftar'
-      }
-    }
-    return hasil
-  }
-
-  //fungsi ambil instansi dari pengguna
-  function instansi(nim1,array){
-    var hasil
-    var i
-    for ( i=0; i<array.length; i++){
-      if (String(nim1)===array[i].card_id){
-        hasil = array[i].instansi
-        break
-      }
-      else {
-        hasil = 'Tidak Terdaftar'
-      }
-    }
-    return hasil
-  }
-  
-  //fungsi ambil ruangan dari ruangan
-  function ruangan(termid,room){
-    var ruang
-    var i
-    for ( i=0; i<room.length; i++){
-      if (String(termid)===room[i].terminal_id){
-        ruang = room[i].room
-        break
-      }
-      else {
-        ruang = 'Tidak Terdaftar'
-      }
-    }
-    return ruang
-  }
-  
-  //fungsi parsing waktu
-  function waktu(t){
-    var tahun,bulan,tanggal,jam,menit,tgl,j,m,date;
-    date = new Date (t)
-    tahun = String(date.getFullYear())
-    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
-    bulan = months[(date.getMonth())]
-    tgl = date.getDate()
-    if (tgl <=9){
-      tanggal = "0"+String(tgl)
+    const {sort,ascdsc,pagesize,pagee,startDate,endDate,searching}=this.state
+    var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
+    startDatee=new Date(startDate)
+    starttahun=startDatee.getFullYear()
+    sb=startDatee.getMonth()+1
+    if (sb<=9){
+      startbulan="0"+String(sb)
     }
     else {
-      tanggal = String(tgl)
+      startbulan=String(sb)
     }
-    j = date.getHours()
+    st=startDatee.getDate()
+    if (st<=9){
+      starttanggal="0"+String(st)
+    }
+    else {
+      starttanggal=String(st)
+    }
+    filterstart=starttahun+"-"+startbulan+"-"+starttanggal;
+    
+    endDatee= new Date(endDate)
+    endtahun=endDatee.getFullYear()
+    eb=endDatee.getMonth()+1
+    if (eb<=9){
+      endbulan="0"+String(eb)
+    }
+    else {
+      endbulan=String(eb)
+    }
+    et=endDatee.getDate()
+    if (et<=9){
+      endtanggal="0"+String(et)
+    }
+    else {
+      endtanggal=String(et)
+    }
+    filterend=endtahun+"-"+endbulan+"-"+endtanggal;
+    
+    fetch('http://192.168.2.7:8020/doorlog/getlogapi/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        sort_by: sort,
+        ascordsc: ascdsc,
+        page_size: pagesize,
+        page: pagee,
+        date_start: filterstart,
+        date_end: filterend,
+        search: searching
+      })
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+
+  componentDidUpdate(){
+    const {sort,ascdsc,pagesize,pagee,startDate,endDate,searching}=this.state
+    var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
+    startDatee=new Date(startDate)
+    starttahun=startDatee.getFullYear()
+    sb=startDatee.getMonth()+1
+    if (sb<=9){
+      startbulan="0"+String(sb)
+    }
+    else {
+      startbulan=String(sb)
+    }
+    st=startDatee.getDate()
+    if (st<=9){
+      starttanggal="0"+String(st)
+    }
+    else {
+      starttanggal=String(st)
+    }
+    filterstart=starttahun+"-"+startbulan+"-"+starttanggal;
+    
+    endDatee= new Date(endDate)
+    endtahun=endDatee.getFullYear()
+    eb=endDatee.getMonth()+1
+    if (eb<=9){
+      endbulan="0"+String(eb)
+    }
+    else {
+      endbulan=String(eb)
+    }
+    et=endDatee.getDate()
+    if (et<=9){
+      endtanggal="0"+String(et)
+    }
+    else {
+      endtanggal=String(et)
+    }
+    filterend=endtahun+"-"+endbulan+"-"+endtanggal;
+    fetch('http://192.168.2.7:8020/doorlog/getlogapi/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        sort_by: sort,
+        ascordsc: ascdsc,
+        page_size: pagesize,
+        page: pagee,
+        date_start: filterstart,
+        date_end: filterend,
+        search: searching
+      })
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+
+  handleSubmitDaftar(e){
+    e.preventDefault();
+    const {nimc,ruanganc,methodc} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/addlog/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        nim: nimc,
+        ruangan: ruanganc,
+        method:methodc
+      })
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
+      }
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
+  }
+
+  handleSubmitEdit(e){
+    e.preventDefault();
+    const {nimu,ruanganu,dateu,statusu} = this.state;
+    var dateinput, timeinput, t,tahun, b, bulan, ta, tanggal, j, jam, m, menit;
+    t = new Date(dateu)
+    tahun = String(t.getFullYear());
+    b = t.getMonth() + 1;
+    if (b<=9){
+        bulan = "0"+String(b)
+    }
+    else {
+        bulan = String(b)
+    }
+    ta = t.getDate();
+    if (ta<=9){
+        tanggal = "0"+String(ta)
+    }
+    else {
+        tanggal = String(ta)
+    }
+    j = t.getHours()
     if (j<=9){
-      jam = "0"+String(j)
+        jam = "0"+String(j)
     }
     else {
-      jam = String(j)
+        jam = String(j)
     }
-    m = date.getMinutes()
+    m = t.getMinutes()
     if (m<=9){
-      menit = "0"+String(m)
+        menit = "0"+String(m)
     }
     else {
-      menit = String(m)
+        menit = String(m)
     }
-    return bulan+" "+tanggal+", "+tahun+" "+jam+":"+menit+":00"
-  }
-  
-  var x=1;
 
-  function no(i){
-    var m=0
-    var hasil=m+i
-    return  hasil
-  }
+    dateinput = tahun+"-"+bulan+"-"+tanggal
+    timeinput = jam+":"+menit+":00.000000"
 
-  const data = {
-    columns: [
-      {
-        label: 'No',
-        field: 'no',
-        sort: 'asc',
+    fetch('http://192.168.2.7:8020/doorlog/editlog/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
       },
-      {
-        label: 'Waktu',
-        field: 'waktu',
-        sort: 'asc',
-      },
-      {
-        label: 'Scard ID',
-        field: 'scardid',
-        sort: 'asc',
-      },
-      {
-        label: 'NIP/NIM',
-        field: 'nipnim',
-        sort: 'asc',
-      },
-      {
-        label: 'Nama',
-        field: 'nama',
-        sort: 'asc',
-      },
-      {
-        label: 'Instansi',
-        field: 'instansi',
-        sort: 'asc',
-      },
-      {
-        label: 'Terminal ID',
-        field: 'terminalid',
-        sort: 'asc',
-      },
-      {
-        label: 'Ruangan',
-        field: 'ruangan',
-        sort: 'asc',
-      },
-      {
-        label: 'Status',
-        field: 'status',
-        sort: 'asc',
+      body: JSON.stringify({
+        nim: nimu,
+        ruangan: ruanganu,
+        date: dateinput,
+        time: timeinput,
+        status: statusu
+      })
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
       }
-    ],
-    rows:this.state.isidata.map(isi=>{
-      return{
-        no:no(x++),
-        waktu: waktu(isi.checked_tm),
-        scardid:isi.scard_id,
-        nipnim:isi.scard_id,
-        nama:nama(isi.scard_id,this.state.ins),
-        instansi: instansi(isi.scard_id,this.state.ins),
-        terminalid: isi.term_id,
-        ruangan: ruangan(isi.term_id,this.state.room),
-        status: lockstatus(isi.lockstatus),
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
       }
     })
-  };
-  while (document.cookie.csrftoken===''){
-    return (<span>loading</span>)
-  }  
+  }
 
-  if (sessionStorage.message==="admin"){
-    return (
+  showDaftar(){
+    this.setState({daftar:true})
+  }
+  hideDaftar(){
+    this.setState({daftar:false})
+  }
+
+  showEdit(a){
+    this.setState({edit:true})
+    this.setState({idu:a})
+  }
+  hideEdit(){
+    this.setState({edit:false})
+  }
+
+  render(){
+    const {isidata,daftar,edit,databenar,datasalah} = this.state
+    var x = 1;
+    function no(i){
+      var m=0
+      var hasil=m+i
+      return  hasil
+    }
+    const data = {
+      columns: [
+        {
+          label: 'No',
+          field: 'no',
+          sort: 'asc',
+        },
+        {
+          label: 'NIM',
+          field: 'nim',
+          sort: 'asc',
+        },
+        {
+          label: 'Nama',
+          field: 'nama',
+          sort: 'asc',
+        },
+        {
+          label: 'ID Ruangan',
+          field: 'idruangan',
+          sort: 'asc',
+        },
+        {
+          label: 'Nama Ruangan',
+          field: 'namaruangan',
+          sort: 'asc',
+        },
+        {
+          label: 'Tanggal',
+          field: 'tanggal',
+          sort: 'asc',
+        },
+        {
+          label: 'Waktu',
+          field: 'waktu',
+          sort: 'asc',
+        },
+        {
+          label: 'Status',
+          field: 'status',
+          sort: 'asc',
+        },
+        {
+          label: 'Method',
+          field: 'method',
+          sort: 'asc',
+        }
+      ],
+      rows: this.state.isidata.map(isi=>{
+        return {
+          no:no(x++),
+          nim: isi.nim,
+          nama: isi.nim,
+          koderuangan: isi.nim,
+          namaruangan: isi.nim,
+          tanggal: isi.nim,
+          waktu: isi.nim,
+          status: isi.nim,
+          method: isi.nim,
+        }
+      })
+    };
+    var aksidata
+    if (daftar===true){
+      aksidata = "show"
+    }
+    else if (edit===true){
+      aksidata = "show"
+    }
+    else {
+      aksidata = "hide"
+    }
+    return(
       <div>
-        <div className="kotakfilter"> 
-          <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
-            <div className="kotakinputlogpintuscardid">
-              <label> Scard ID </label> <br></br>
-              <input name="scardID" onChange={this.handleChange} className="inputformlogpintuscardid" type="text" placeholder="Scard Id"></input>
-            </div>
-            
-            <div className="kotakinputlogpintutermid">
-              <label> Terminal ID </label> <br></br>
-              <input name="terminalID" onChange={this.handleChange} className="inputformlogpintutermid" type="text" placeholder="Terminal Id"></input>
-            </div>
+        {
+          daftar &&
+          <div>
+          <div className="kotakfilter2"> 
+            <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
+              {
+                databenar && 
+                <span className="texthijau">*Data berhasil disimpan</span>
+              }
+              {
+                datasalah &&
+                <span className="textmerah">*Data yang diinput salah</span>
+              }
+              <div className="daftarlognim">
+                <label><b>NIM</b>  </label> <br></br>
+                <input name="nimc" onChange={this.handleChange} className="inputdaftarlogpintu" type="text" placeholder="ID Ruangan" required></input>
+              </div>
   
-            <div className="kotakinputlogpintustart">
-              <label> Start Date </label> <br></br>
-              <input name="startDate" onChange={this.handleChange} className="inputformlogpintustart" type="date" ></input>
-            </div> 
-            
-            <div className="kotakinputlogpintuend">
-              <label> End Date </label> <br></br>
-              <input name="endDate" onChange={this.handleChange} className="inputformlogpintuend" type="date"></input>
-            </div>
-            
-            {
-              datasalah &&
-              <p className="textmerah">*Data yang diinput salah</p>
-            }
-            { 
-              (datasalah===false) &&
-              <p className="texthijau">&emsp;</p>
-            }
-            <div className="kotaksubmitlogpintu">
-              <input className="submitformlogpintu" type="submit" value="Filter"></input>
-            </div>
-          </form> 
+              <div className="daftarlognamaruangan">
+                <label> <b>Nama Ruangan</b></label> <br></br>
+                <input name="ruanganc" onChange={this.handleChange} className="inputdaftarlogpintu" type="text" placeholder="Nama Ruangan" required ></input>
+              </div> 
+              
+              <div className="daftarlogmethod">
+                <label><b>Method</b>  </label> <br></br>
+                <select name="methodc" onChange={this.handleChange} className="inputdaftarlogpintu" required>
+                  <option value="1"> Contact </option>
+                  <option value="2"> Contactless </option>
+                  <option value="3"> Finger Print </option>
+                  <option value="4"> Admin </option>
+                </select>
+              </div>
+              
+              <div className="kotaksubmitpengguna">
+                <input className="submitformlogpintu" type="submit" value="Add"></input>
+              </div>
+    
+              <div className="kotakcancelpengguna">
+                <a onClick={() => this.hideDaftar()}> <span className="cancelformpengguna">Cancel</span></a>
+              </div>
+            </form> 
+          </div>
         </div>
-        <div>
-          <Route path="/logpintu/daftar" render={ () => <Daftarlogpintu token={this.props.token} /> } />
-        </div>      
-        <div className="kotaktabellogpintu">
-            <div className="kotakdaftarruangan">
-                <Link to="/logpintu/daftar">
-                  <div className="daftar">
-                    <i className="fa fa-plus"></i> 
-                    <span> Log Pintu </span>
-                  </div>
-                </Link>
-                <span>
-                  <a onClick={() => this.refresh()}>
-                    <div className="daftar2">
-                      <i className="fa fa-refresh"></i>
-                    </div>
-                  </a>
-                </span>
-            </div>
-            <div className="isitabel">
-              <MDBDataTable
-                responsive
-                striped
-                bordered
-                small
-                hover
-                data={data}
-              />
-            </div>   
-        </div>
-        <div>
-            
-        </div>
-      </div>
-    );
-  }
-  else{
-    return (
-      <div>  
-        <div className="kotakfilter"> 
-          <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
-            <div className="kotakinputlogpintuscardid">
-              <label> Scard ID </label> <br></br>
-              <input name="scardID" onChange={this.handleChange} className="inputformlogpintuscardid" type="text" placeholder="Scard Id"></input>
-            </div>
-            
-            <div className="kotakinputlogpintutermid">
-              <label> Terminal ID </label> <br></br>
-              <input name="terminalID" onChange={this.handleChange} className="inputformlogpintutermid" type="text" placeholder="Terminal Id"></input>
-            </div>
-  
-            <div className="kotakinputlogpintustart">
-              <label> Start Date </label> <br></br>
-              <input name="startDate" onChange={this.handleChange} className="inputformlogpintustart" type="date" ></input>
-            </div> 
-            
-            <div className="kotakinputlogpintuend">
-              <label> End Date </label> <br></br>
-              <input name="endDate" onChange={this.handleChange} className="inputformlogpintuend" type="date"></input>
-            </div>
-            
-            <div className="kotaksubmitlogpintu2">
-              <input className="submitformlogpintu" type="submit" value="Filter"></input>
-            </div>
-          </form> 
-        </div>   
-        <div className="kotaktabellogpintu2">
-            <div className="isitabel">
-              <MDBDataTable
-                responsive
-                striped
-                bordered
-                small
-                hover
-                data={data}
-              />
-            </div>   
-        </div>
-      </div>
-    );
-  }
+        }
+        
+        {
+          edit &&
+          <div>
+            <div className="kotakfilter2"> 
+              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
+                {
+                  databenar && 
+                  <span className="texthijau">*Data berhasil disimpan</span>
+                }
+                {
+                  datasalah &&
+                  <span className="textmerah">*Data yang diinput salah</span>
+                }
+                <div className="kotakinputlogpintunim">
+                  <label> <b>NIM</b> </label> <br></br>
+                  <input name="nimu" onChange={this.handleChange} className="inputformlogpintunim" type="text" placeholder="NIM" required ></input>
+                </div>
+                      
+                <div className="kotakinputlogpintuterminalid">
+                  <label><b>Nama Ruangan</b> </label> <br></br>
+                  <input name="ruanganu" onChange={this.handleChange} className="inputformlogpintuterminalid" type="text" placeholder="Terminal Id" required ></input>
+                </div>
 
-  
-  }
+                <div className="kotakinputlogpintucheckedtm">
+                  <label> <b>Waktu dan Tanggal</b>  </label> <br></br>
+                  <input name="dateu" onChange={this.handleChange} className="inputformlogpintucheckedtm" type="datetime-local" required></input>
+                </div> 
+                      
+                <div className="kotakinputlogpintustatus">
+                  <label> <b>Status</b> </label> <br></br>
+                  <select name="lockstatus" onChange={this.handleChange} className="inputformlogpintustatus" required>
+                    <option value="1"> Hadir</option>
+                    <option value="2"> Absen </option>
+                    <option value="3"> Sakit </option>
+                    <option value="4"> Izin </option>
+                    <option value="5"> Forbidden </option>
+                  </select>
+                </div>
+            
+                <div className="kotaksubmitpengguna2">
+                  <input className="submitformlogpintu" type="submit" value="Add"></input>
+                </div>
+
+                <div className="kotakcancelpengguna2">
+                  <a onClick={() => this.hideEdit()}> <span className="cancelformpengguna">Cancel</span></a>
+                </div>
+              </form> 
+            </div>
+          </div>
+        }
+        { (daftar===false)&&(edit===false)&&
+          <div>
+            <div className="kotakdaftarruangan">
+              <a onClick={() => this.showDaftar()}>
+                <div className="daftar">
+                  <i className="fa fa-plus"></i> 
+                  <span><b>Log</b></span>
+                </div>
+              </a>
+            </div>
+            <div className="kotakdaftarruangan2">
+              <a onClick={() => this.showEdit()}>
+                <div className="daftar">
+                  <i className="fa fa-pencil"></i> 
+                  <span><b>Log</b></span>
+                </div>
+              </a>
+            </div>
+          </div>
+        }
+        <div id={aksidata} className="kotakdata">
+          <div>
+            <div className="filtersortlogpintu">
+              <label> <b>Urutkan Berdasarkan</b> </label> <br></br>
+              <select name="sort" onChange={this.handleChange} className="inputfilterlogpintu" required>
+                <option value="nim"> NIM </option>
+                <option value="nama"> Nama </option>
+              </select>
+            </div>
+            <div className="filterascdsclogpintu">
+              <label> <b>Jenis Urutan</b> </label> <br></br>
+              <select name="ascdsc" onChange={this.handleChange} className="inputfilterlogpintu" required>
+                <option value="asc"> Menaik </option>
+                <option value="dsc"> Menurun </option>
+              </select>
+            </div>
+            <div className="filterstartlogpintu">
+              <label> <b>Tanggal Awal</b> </label> <br></br>
+              <input name="startDate" onChange={this.handleChange} className="inputfilterlogpintu" type="date" required></input>
+            </div>
+            <div className="filterendlogpintu">
+              <label> <b>Tanggal Akhir</b></label> <br></br>
+              <input name="endDate" onChange={this.handleChange} className="inputfilterlogpintu" type="date" required></input>
+            </div>
+            <div className="filtersearchlogpintu">
+              <label> <b>Cari Data</b> </label> <br></br>
+              <input name="searching" onChange={this.handleChange} className="inputfilterlogpintu" type="text" placeholder="Cari data" required></input>
+            </div>
+          </div>
+          <div className="paddingtop40px"></div>
+          <div className="isitabel">
+            <MDBDataTable
+            responsive
+            displayEntries={false}              info={false}
+            paging={false}
+            info={false}
+            searching={false}
+            sortable={false}
+            striped
+            bordered
+            small
+            hover
+            theadColor={""}
+            data={data}
+            />
+          </div> 
+      </div>
+    </div>
+    )
+  } 
 }
 
 export default withRouter(Logpintu);

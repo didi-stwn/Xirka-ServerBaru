@@ -1,204 +1,297 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
-import {Route,Link,withRouter} from "react-router-dom";
-import Daftarruangan from './daftarruangan';
-import Editruangan from './editruangan';
+import {Route,Link,withRouter,Switch} from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 class Ruangan extends Component{
-    constructor(props) {
-      super(props);
-      this.state = {
-        isidata: [],
-        editID:'',
-      };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      isidata: [],
+      daftar: false,
+      edit:false,
+      idc:'',
+      namac:'',
+      idu:'',
+      namau:'',
+      datasalah: false,
+      databenar: false,
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmitDaftar = this.handleSubmitDaftar.bind(this);
+    this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
+  }
 
-    deleteData(e,f,g){
-      var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: Terminal ID = " +e+", Nama Ruangan= "+f+", Instansi= "+g+" ?");
-      if (yes === true){
-        let he= new Headers()
-        let token = this.props.token
-        he.append ('x-access-token', token)
-        fetch('http://192.168.2.7:3000/terminal/'+e, {
-          method: 'delete',
-          headers: he 
-        })
-        .then(response=>{
-          if (response.ok){
-            window.alert("Data berhasil dihapus")
-          }
-          else{
-            window.alert("Data tidak berhasil dihapus")
-          }
-        })
-      }
-    }
+  handleChange(e) {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
 
-    editData(e){
-      this.setState({editID:e})
-    }
-
-    componentDidMount(){
-      let he= new Headers()
-      let token = this.props.token
-      he.append ('x-access-token', token)
-      fetch('http://192.168.2.7:3000/terminal', {
-        method: 'GET',
-        headers: he
+  handleSubmitDaftar(e){
+    e.preventDefault();
+    const {idc,namac} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/registerRoom/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        id_ruangan: idc,
+        nama_ruangan: namac
       })
-      .then(response=>response.json())
-      .then(data => this.setState({isidata: data}))
-    }
-
-    refresh(){
-      let he= new Headers()
-      let token = this.props.token
-      he.append ('x-access-token', token)
-      fetch('http://192.168.2.7:3000/terminal', {
-        method: 'GET',
-        headers: he
-      })
-      .then(response=>response.json())
-      .then(data => this.setState({isidata: data}))
-    }
-
-    
-  
-    render(){
-      sessionStorage.removeItem("login");
-      const {isidata} = this.state;
-      var x=1;
-      function no(i){
-        var m=0
-        var hasil=m+i
-        return  hasil
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
       }
-      const dataadmin = {
-        columns: [
-          {
-            label: 'No',
-            field: 'no',
-            sort: 'asc',
-          },
-          {
-            label: 'Terminal ID',
-            field: 'terminalid',
-            sort: 'asc',
-          },
-          {
-            label: 'Nama Ruangan',
-            field: 'namaruangan',
-            sort: 'asc',
-          },
-          {
-            label: 'Instansi',
-            field: 'instansi',
-            sort: 'asc',
-          },
-          {
-            label: 'Keterangan',
-            field: 'keterangan'
-          }
-        ],
-        rows: isidata.map(isi=>{
-          return {
-            no:no(x++),
-            terminalid:isi.terminal_id,
-            namaruangan:isi.room,
-            instansi: isi.instansi,
-            keterangan:<div className="editdelete"> <Link to="/ruangan/edit" onClick={() => this.editData(isi.terminal_id)}><i className="fa fa-pencil"></i></Link> | <a className="mousepointer" onClick={() => this.deleteData(isi.terminal_id,isi.room,isi.instansi)}> <i className="fa fa-trash"></i></a> </div>
-          }
-        })
-      };
-      var y=1;
-      const dataclient = {
-        columns: [
-          {
-            label: 'No',
-            field: 'no',
-            sort: 'asc',
-          },
-          {
-            label: 'Terminal ID',
-            field: 'terminalid',
-            sort: 'asc',
-          },
-          {
-            label: 'Nama Ruangan',
-            field: 'namaruangan',
-            sort: 'asc',
-          },
-          {
-            label: 'Instansi',
-            field: 'instansi',
-            sort: 'asc',
-          }
-        ],
-        rows: isidata.map(isi=>{
-          return {
-            no:no(y++),
-            terminalid:isi.terminal_id,
-            namaruangan:isi.room,
-            instansi: isi.instansi,
-          }
-        })
-      };
-      const {editID}= this.state;
-      if (sessionStorage.message==="admin"){
-        return (
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
+  }
+
+  handleSubmitEdit(e){
+    e.preventDefault();
+    const {idu,namau} = this.state
+    fetch('http://192.168.2.7:8020/doorlog/editRoom/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        id_ruangan: idu,
+        nama_ruangan_baru: namau
+      })
+    })
+    .then(response => {
+      if (response.ok){
+        this.setState({databenar:true})
+        this.setState({datasalah:false})
+      }
+      else {
+        this.setState({datasalah:true})
+        this.setState({databenar:false})
+      }
+    })
+  }
+
+  componentWillMount(){
+    fetch('http://192.168.2.7:8020/doorlog/rooms/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      }
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+
+  componentDidUpdate(){
+    fetch('http://192.168.2.7:8020/doorlog/rooms/', {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      }
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+
+  deleteData(e,f){
+    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: ID Ruangan = " +e+", Nama Ruangan= "+f);
+    if (yes === true){
+      fetch('http://192.168.2.7:8020/doorlog/deleteRoom/', {
+        method: 'post',
+        headers :{
+          "Authorization" : "Bearer "+ sessionStorage.name,
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          id_ruangan: e
+          })
+      })
+      .then(response=>{
+        if (response.ok){
+          window.alert("Data berhasil dihapus")
+        }
+        else{
+          window.alert("Data tidak berhasil dihapus")
+        }
+      })
+    }
+  }
+
+  showDaftar(){
+    this.setState({daftar:true})
+  }
+  hideDaftar(){
+    this.setState({daftar:false})
+  }
+
+  showEdit(a){
+    this.setState({edit:true})
+    this.setState({idu:a})
+  }
+  hideEdit(){
+    this.setState({edit:false})
+  }
+
+  render(){
+    const {daftar,edit,databenar,datasalah,idu} = this.state
+    var x = 1;
+    function no(i){
+      var m=0
+      var hasil=m+i
+      return  hasil
+    }
+    const data = {
+      columns: [
+        {
+          label: 'No',
+          field: 'no',
+          sort: 'asc',
+        },
+        {
+          label: 'ID Ruangan',
+          field: 'idruangan',
+          sort: 'asc',
+        },
+        {
+          label: 'Nama Ruangan',
+          field: 'namaruangan',
+          sort: 'asc',
+        },
+        {
+          label: 'Keterangan',
+          field: 'keterangan'
+        }
+      ],
+      rows: this.state.isidata.map(isi=>{
+        return {
+          no:no(x++),
+          idruangan: isi.kode_ruangan,
+          namaruangan:isi.nama_ruangan,
+          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.kode_ruangan)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.kode_ruangan,isi.nama_ruangan)}> <i className="fa fa-trash"></i></a> </div>
+        }
+      })
+    };
+
+    var aksidata
+    if (daftar===true){
+      aksidata = "show"
+    }
+    else if (edit===true){
+      aksidata = "show"
+    }
+    else {
+      aksidata = "hide"
+    }
+    return(
+      <div>
           <div>
-            <div>
-              <Route path="/ruangan/daftar" render={ () => <Daftarruangan token={this.props.token} /> } />
-              <Route path="/ruangan/edit" render={ () => <Editruangan token={this.props.token} editID={editID}/> } />
-            </div>
-             
-            <div className="box-footer">
-                <div className="kotakdaftarruangan">
-                    <Link to="/ruangan/daftar">
-                      <div className="daftar">
-                        <i className="fa fa-plus"></i> 
-                        <span> Ruangan </span>
-                      </div>
-                    </Link>
-                    <span>
-                      <a onClick={() => this.refresh()}>
-                        <div className="daftar2">
-                          <i className="fa fa-refresh"></i>
-                        </div>
-                      </a>
-                    </span>
+            {daftar &&
+            
+            <div className="kotakdaftar"> 
+              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
+                {
+                  databenar && 
+                  <span className="texthijau">*Data berhasil disimpan</span>
+                }
+                {
+                  datasalah &&
+                  <span className="textmerah">*Data yang diinput salah</span>
+                }
+              
+                <div className="labelinputidruangan">
+                  <label> ID Ruangan </label><br></br>
+                  <input name="idc" onChange={this.handleChange} className="inputidruangan" type="text" placeholder="ID Ruangan" required></input>
                 </div>
-                <div className="isitabel">
-                    <MDBDataTable
-                    responsive
-                    striped
-                    bordered
-                    hover
-                    data={dataadmin}
-                    /> 
-                </div>  
+
+                <div className="labelinputnamaruangan">
+                  <label> Nama Ruangan</label><br></br>
+                  <input name="namac" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Ruangan" required ></input>
+                </div> 
+
+                <div className="kotaksubmitpengguna">
+                  <input className="submitformlogpintu" type="submit" value="Add"></input>
+                </div>
+
+                <div className="kotakcancelpengguna">
+                  <a onClick={() => this.hideDaftar()}> <span className="cancelformpengguna">Cancel</span></a>
+                </div>
+                
+              </form> 
             </div>
-          </div>       
-        );        
-      }
-      else{
-        return (
-          <div>
-            <div className="box-footer">
+            }
+            {
+              edit &&
+              <div className="kotakdaftar"> 
+                <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitEdit}>
+                  {
+                    databenar && 
+                    <span className="texthijau">*Data berhasil disimpan</span>
+                  }
+                  {
+                    datasalah &&
+                    <span className="textmerah">*Data yang diinput salah</span>
+                  }
+                
+                  <div className="labelinputidruangan">
+                    <label> ID Ruangan </label><br></br>
+                    <input onChange={this.handleChange} className="inputidruangan" type="text" placeholder="ID Ruangan" value={idu} required></input>
+                  </div>
+
+                  <div className="labelinputnamaruangan">
+                    <label> Nama Ruangan</label><br></br>
+                    <input name="namau" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Ruangan" required ></input>
+                  </div> 
+
+                  <div className="kotaksubmitpengguna">
+                    <input className="submitformlogpintu" type="submit" value="Edit"></input>
+                  </div>
+
+                  <div className="kotakcancelpengguna">
+                    <a onClick={() => this.hideEdit()}> <span className="cancelformpengguna">Cancel</span></a>
+                  </div>
+                  
+                </form> 
+              </div>
+            }
+          </div>
+          { (daftar===false)&&(edit===false)&&
+          <div className="kotakdaftarruangan">
+                <a onClick={() => this.showDaftar()}>
+                  <div className="daftar">
+                    <i className="fa fa-plus"></i> 
+                    <span><b>Ruangan</b></span>
+                  </div>
+                </a>
+          </div>
+          }
+          <div id={aksidata} className="kotakdata">
               <div className="isitabel">
                 <MDBDataTable
                 responsive
+                displayEntries={false}
+                info={false}
+                paging={false}
                 striped
                 bordered
+                small
                 hover
-                data={dataclient}
-                /> 
+                theadColor={""}
+                data={data}
+                />
               </div>  
-            </div>
-          </div>       
-        );
-      }
-    }
+          </div>
+      </div>
+    )
+  } 
 }
 export default withRouter(Ruangan);

@@ -2,100 +2,90 @@ import React,{Component} from 'react';
 import {Link,withRouter} from 'react-router-dom';
 
 class Daftarpengguna extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {
-    scardid: '',
-    nim:'',
-    nama:'',
-    instansi:'',
-    datasalah: false,
-    databenar: false,
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  handleChange(e) {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  }
-  
-  handleSubmit(e){
-    e.preventDefault();
-    const {scardid,nim,nama,instansi} = this.state
-    var request = 'card_id='+scardid+'&nim='+nim+'&name='+nama+'&instansi='+instansi;
+    constructor(props) {
+      super(props);
+      this.state = {
+      nimc:'',
+      namac:'',
+      datasalah: false,
+      databenar: false,
+      };
+      this.handleChange = this.handleChange.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+    }
+    handleChange(e) {
+      const { name, value } = e.target;
+      this.setState({ [name]: value });
+    }
     
-    let he= new Headers()
-    let token = this.props.token
-    he.append ('x-access-token', token)
-    he.append ('Content-type', 'application/x-www-form-urlencoded')
-    fetch('http://192.168.2.7:3000/card', {
-      method: 'post',
-      body: request,
-      headers: he 
-    })
-    .then(response => {
-      if (response.ok){
-        this.setState({databenar:true})
-        this.setState({datasalah:false})
-      }
-      else {
-        this.setState({datasalah:true})
-        this.setState({databenar:false})
-      }
-    })
-  }
+    handleSubmit(e){
+      e.preventDefault();
+      const {nimc,namac} = this.state
+      fetch('http://192.168.2.7:8020/doorlog/registerUser/', {
+        method: 'post',
+        headers :{
+          "Authorization" : "Bearer "+ sessionStorage.name,
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          nim: nimc,
+          nama: namac
+        })
+      })
+      .then(response => {
+        if (response.ok){
+          this.setState({databenar:true})
+          this.setState({datasalah:false})
+        }
+        else {
+          this.setState({datasalah:true})
+          this.setState({databenar:false})
+        }
+      })
+    }
 
     render(){
-      const {databenar,datasalah} = this.state
-        return (
-            <div>
-              <div className="kotakfilter"> 
-                <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
-                  <div className="kotakinputpenggunascardid">
-                    <label> Scard ID </label> <br></br>
-                    <input name="scardid" onChange={this.handleChange} className="inputformpenggunascardid" type="text" placeholder="Scard Id" required></input>
-                  </div>
+      const {nimc,namac,databenar,datasalah} = this.state
+      return (
+        <div>
+          <div className="kotakfilter"> 
+            <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
                   
-                  <div className="kotakinputpenggunanim">
-                    <label> NIM </label> <br></br>
-                    <input name="nim" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="Terminal Id" required></input>
-                  </div>
+              <div className="kotakinputpenggunanim">
+                <label> NIM </label> <br></br>
+                <input name="nimc" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="Terminal Id" required></input>
+              </div>
 
-                  <div className="kotakinputpenggunanama">
-                    <label> Nama </label> <br></br>
-                    <input name="nama" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Nama" required ></input>
-                  </div> 
+              <div className="kotakinputpenggunanama">
+                <label> Nama </label> <br></br>
+                <input name="namac" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Nama" required ></input>
+              </div> 
                   
-                  <div className="kotakinputpenggunainstansi">
-                    <label> Instansi </label> <br></br>
-                    <input name="instansi" onChange={this.handleChange} className="inputformpenggunainstansi" type="text" placeholder="Instansi" required></input>
-                  </div>
-                  {
-                    databenar && 
-                    <p className="texthijau">*Data berhasil disimpan</p>
-                  }
-                  {
-                    datasalah &&
-                    <p className="textmerah">*Data yang diinput salah</p>
-                  }
-                  { 
-                    (databenar===false && datasalah===false) &&
-                    <p className="texthijau">&emsp;</p>
-                  }
-                  <div className="kotaksubmitpengguna">
-                    <input className="submitformlogpintu" type="submit" value="Add"></input>
-                  </div>
+              {
+                databenar && 
+                <p className="texthijau">*Data berhasil disimpan</p>
+              }
+              {
+                datasalah &&
+                <p className="textmerah">*Data yang diinput salah</p>
+              }
+              { 
+                (databenar===false && datasalah===false) &&
+                <p className="texthijau">&emsp;</p>
+              }
+              <div className="kotaksubmitpengguna">
+                <input className="submitformlogpintu" type="submit" value="Add"></input>
+              </div>
 
-                  <div className="kotakcancelpengguna">
-                    <Link to="/pengguna"> <span className="cancelformpengguna">Cancel</span></Link>
-                  </div>
-                </form> 
+              <div className="kotakcancelpengguna">
+                <Link to="/pengguna"> <span className="cancelformpengguna">Cancel</span></Link>
               </div>
-              <div className="paddingtop30px">
-              </div>
-            </div>
-        )
+            </form> 
+          </div>
+          <div className="paddingtop30px">
+          </div>
+        </div>
+      )
     } 
 }
 export default withRouter(Daftarpengguna);
