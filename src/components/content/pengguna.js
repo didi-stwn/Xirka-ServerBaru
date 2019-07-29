@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
 import {withRouter} from "react-router-dom";
+import get from './config';
 
 
 class Pengguna extends Component{
@@ -30,13 +31,14 @@ class Pengguna extends Component{
   handleSubmitDaftar(e){
     e.preventDefault();
     const {nimc,namac} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/registerUser/', {
+    fetch(get.adduser, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         nim: nimc,
         nama: namac
       })
@@ -56,13 +58,14 @@ class Pengguna extends Component{
   handleSubmitEdit(e){
     e.preventDefault();
     const {nimu,namau} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/editUser/', {
+    fetch(get.edituser, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         nim: nimu,
         name_update: namau
       })
@@ -80,7 +83,7 @@ class Pengguna extends Component{
   }
 
   componentDidMount(){
-    fetch('http://192.168.2.7:8020/doorlog/allusers/', {
+    fetch(get.listuser, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -91,8 +94,8 @@ class Pengguna extends Component{
     .then (response =>this.setState({isidata:response.list}))
   }
 
-  componentDidUpdate(){
-    fetch('http://192.168.2.7:8020/doorlog/allusers/', {
+  refresh(){
+    fetch(get.listuser, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -106,13 +109,14 @@ class Pengguna extends Component{
   deleteData(e,f){
     var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e+", Nama= "+f);
     if (yes === true){
-      fetch('http://192.168.2.7:8020/doorlog/deleteUser/', {
+      fetch(get.deleteuser, {
         method: 'post',
         headers :{
           "Authorization" : "Bearer "+ sessionStorage.name,
           "Content-Type" : "application/json"
         },
         body: JSON.stringify({
+          user_id: sessionStorage.user,
           nim: e
           })
       })
@@ -129,6 +133,7 @@ class Pengguna extends Component{
 
   showDaftar(){
     this.setState({daftar:true})
+    this.setState({edit:false})
   }
   hideDaftar(){
     this.setState({daftar:false})
@@ -136,9 +141,11 @@ class Pengguna extends Component{
     this.setState({databenar:false})
   }
 
-  showEdit(a){
+  showEdit(a,b){
     this.setState({edit:true})
+    this.setState({daftar:false})
     this.setState({nimu:a})
+    this.setState({namau:b})
   }
   hideEdit(){
     this.setState({edit:false})
@@ -147,7 +154,7 @@ class Pengguna extends Component{
   }
 
   render(){
-    const {daftar,edit,databenar,datasalah,nimu} = this.state
+    const {daftar,edit,databenar,datasalah,nimu,namau} = this.state
     var x = 1;
     function no(i){
       var m=0
@@ -181,7 +188,7 @@ class Pengguna extends Component{
           no:no(x++),
           nim: isi.nim,
           namapengguna:isi.nama,
-          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.nim)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.nim,isi.nama)}> <i className="fa fa-trash"></i></a> </div>
+          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.nim,isi.nama)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.nim,isi.nama)}> <i className="fa fa-trash"></i></a> </div>
         }
       })
     };
@@ -252,7 +259,7 @@ class Pengguna extends Component{
 
                   <div className="labelinputnamaruangan">
                     <label> Nama Pengguna</label><br></br>
-                    <input name="namau" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Pengguna" required ></input>
+                    <input name="namau" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Pengguna" value={namau} required ></input>
                   </div> 
 
                   <div className="kotaksubmitpengguna">
@@ -275,13 +282,13 @@ class Pengguna extends Component{
                     <span><b>Pengguna</b></span>
                   </div>
                 </a>
-                {/* <span>
+                <span>
                   <a onClick={() => this.refresh()}>
                     <div className="daftar2">
                       <i className="fa fa-refresh"></i>
                     </div>
                   </a>
-                </span> */}
+                </span>
           </div>
           }
           <div id={aksidata} className="kotakdata">

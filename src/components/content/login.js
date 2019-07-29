@@ -1,5 +1,6 @@
 import React from 'react';
-import logo from './img/logo.png'
+import logo from './img/logo.png';
+import get from './config';
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ export default class Login extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
         const {username, password} = this.state
-        fetch('http://192.168.2.7:8020/api-token-auth/', {
+        fetch(get.login, {
         method: 'post',
         headers :{"Content-Type" : "application/json"},
         body: JSON.stringify({
@@ -37,6 +38,8 @@ export default class Login extends React.Component {
             }
             else{
                 sessionStorage.setItem("name",response.token)
+                var a=JSON.parse(atob(sessionStorage.name.split(".")[1])).user_id
+                sessionStorage.setItem("user",a)
                 window.location.reload()
             }
             
@@ -44,7 +47,6 @@ export default class Login extends React.Component {
     }
     
     render(){
-        sessionStorage.removeItem("login");
         document.title="Login"
         const {gagal} = this.state;
         return (

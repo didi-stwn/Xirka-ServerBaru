@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
 import {withRouter} from 'react-router-dom';
+import get from './config';
 
 class Logpintu extends Component{
   constructor(props) {
@@ -10,6 +11,7 @@ class Logpintu extends Component{
       ascdsc:'asc',
       pagesize: 10,
       pagee: 1,
+      x:1,
       startDate: new Date('2019-07-13'),
       endDate: new Date(),
       searching:'',
@@ -74,7 +76,7 @@ class Logpintu extends Component{
     }
     filterend=endtahun+"-"+endbulan+"-"+endtanggal;
     
-    fetch('http://192.168.2.7:8020/doorlog/getlogapi/', {
+    fetch(get.listlog, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -91,11 +93,15 @@ class Logpintu extends Component{
       })
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{ console.log(response)
+      this.setState({limit:response.length})
+      this.setState({isidata:response.list})})
   }
 
-  componentDidUpdate(){
-    const {sort,ascdsc,pagesize,pagee,startDate,endDate,searching}=this.state
+  refresh(){
+    const {sort,ascdsc,pagesize,pagee,startDate,endDate,searching,x}=this.state
+    this.setState({pagee:1})
+    this.setState({x:1})
     var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
     startDatee=new Date(startDate)
     starttahun=startDatee.getFullYear()
@@ -132,7 +138,7 @@ class Logpintu extends Component{
       endtanggal=String(et)
     }
     filterend=endtahun+"-"+endbulan+"-"+endtanggal;
-    fetch('http://192.168.2.7:8020/doorlog/getlogapi/', {
+    fetch(get.listlog, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -142,7 +148,7 @@ class Logpintu extends Component{
         sort_by: sort,
         ascordsc: ascdsc,
         page_size: pagesize,
-        page: pagee,
+        page: 1,
         date_start: filterstart,
         date_end: filterend,
         search: searching
@@ -155,7 +161,7 @@ class Logpintu extends Component{
   handleSubmitDaftar(e){
     e.preventDefault();
     const {nimc,ruanganc,methodc} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/addlog/', {
+    fetch(get.addlog, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -217,13 +223,14 @@ class Logpintu extends Component{
     dateinput = tahun+"-"+bulan+"-"+tanggal
     timeinput = jam+":"+menit+":00.000000"
 
-    fetch('http://192.168.2.7:8020/doorlog/editlog/', {
+    fetch(get.editlog, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         nim: nimu,
         ruangan: ruanganu,
         date: dateinput,
@@ -242,6 +249,127 @@ class Logpintu extends Component{
       }
     })
   }
+  
+  next(a){
+    const {sort,ascdsc,pagesize,startDate,endDate,searching,pagee,x}=this.state
+    this.setState({pagee:a})
+    this.setState({x:((pagee+1)*pagesize-(pagesize-1))})
+    var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
+    startDatee=new Date(startDate)
+    starttahun=startDatee.getFullYear()
+    sb=startDatee.getMonth()+1
+    if (sb<=9){
+      startbulan="0"+String(sb)
+    }
+    else {
+      startbulan=String(sb)
+    }
+    st=startDatee.getDate()
+    if (st<=9){
+      starttanggal="0"+String(st)
+    }
+    else {
+      starttanggal=String(st)
+    }
+    filterstart=starttahun+"-"+startbulan+"-"+starttanggal;
+    
+    endDatee= new Date(endDate)
+    endtahun=endDatee.getFullYear()
+    eb=endDatee.getMonth()+1
+    if (eb<=9){
+      endbulan="0"+String(eb)
+    }
+    else {
+      endbulan=String(eb)
+    }
+    et=endDatee.getDate()
+    if (et<=9){
+      endtanggal="0"+String(et)
+    }
+    else {
+      endtanggal=String(et)
+    }
+    filterend=endtahun+"-"+endbulan+"-"+endtanggal;
+    fetch(get.listlog, {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        sort_by: sort,
+        ascordsc: ascdsc,
+        page_size: pagesize,
+        page: a,
+        date_start: filterstart,
+        date_end: filterend,
+        search: searching
+      })
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+  previous(a){
+    const {sort,ascdsc,pagesize,startDate,endDate,searching,pagee}=this.state
+    this.setState({pagee:a})
+    this.setState({x:((pagee-1)*pagesize-(pagesize-1))})
+    var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
+    startDatee=new Date(startDate)
+    starttahun=startDatee.getFullYear()
+    sb=startDatee.getMonth()+1
+    if (sb<=9){
+      startbulan="0"+String(sb)
+    }
+    else {
+      startbulan=String(sb)
+    }
+    st=startDatee.getDate()
+    if (st<=9){
+      starttanggal="0"+String(st)
+    }
+    else {
+      starttanggal=String(st)
+    }
+    filterstart=starttahun+"-"+startbulan+"-"+starttanggal;
+    
+    endDatee= new Date(endDate)
+    endtahun=endDatee.getFullYear()
+    eb=endDatee.getMonth()+1
+    if (eb<=9){
+      endbulan="0"+String(eb)
+    }
+    else {
+      endbulan=String(eb)
+    }
+    et=endDatee.getDate()
+    if (et<=9){
+      endtanggal="0"+String(et)
+    }
+    else {
+      endtanggal=String(et)
+    }
+    filterend=endtahun+"-"+endbulan+"-"+endtanggal;
+    fetch(get.listlog, {
+      method: 'post',
+      headers :{
+        "Authorization" : "Bearer "+ sessionStorage.name,
+        "Content-Type" : "application/json"
+      },
+      body: JSON.stringify({
+        sort_by: sort,
+        ascordsc: ascdsc,
+        page_size: pagesize,
+        page: a,
+        date_start: filterstart,
+        date_end: filterend,
+        search: searching
+      })
+    })
+    .then (response =>response.json())  
+    .then (response =>this.setState({isidata:response.list}))
+  }
+
+
   showDaftar(){
     this.setState({daftar:true})
   }
@@ -262,21 +390,14 @@ class Logpintu extends Component{
     this.setState({databenar:false})
     this.setState({statusu:1})
   }
-  next(){
-    const {pagee} = this.state
-    this.setState({pagee:(pagee+1)})
-  }
-  previous(){
-    const {pagee} = this.state
-    this.setState({pagee:(pagee-1)})
-  }
+  
 
   render(){
-    const {daftar,edit,databenar,datasalah,limit,pagesize,pagee} = this.state
-    var x=pagee*10-9;
-    var lim=42;
-    var maxPage=parseInt(lim/pagesize);
-    if ((lim%pagesize)!==0){
+    const {isidata,daftar,edit,databenar,datasalah,limit,pagesize,pagee,x} = this.state
+    var i=x;
+    
+    var maxPage=parseInt(limit/pagesize);
+    if ((limit%pagesize)!==0){
       maxPage = maxPage+1
     }
     var showNext = false;
@@ -376,6 +497,23 @@ class Logpintu extends Component{
       return hasil
     }
 
+    function method(a){
+      var hasil
+      if (a===1){
+        hasil = "Contact"
+      }
+      else if (a===2){
+        hasil = "Contactless"
+      }
+      else if (a===3){
+        hasil = "Fingerprint"
+      }
+      else if (a===4){
+        hasil = "Admin"
+      }
+      return hasil
+    }
+
     const data = {
       columns: [
         {
@@ -426,7 +564,7 @@ class Logpintu extends Component{
       ],
       rows: this.state.isidata.map(isi=>{
         return {
-          no:no(x++),
+          no:no(i++),
           nim: isi.nim,
           nama: isi.nama,
           koderuangan: isi.kode_ruangan,
@@ -434,7 +572,7 @@ class Logpintu extends Component{
           tanggal: tanggal(isi.date),
           waktu: waktu(isi.time),
           status: status(isi.status),
-          method: isi.nim,
+          method: method(isi.method),
         }
       })
     };
@@ -469,8 +607,8 @@ class Logpintu extends Component{
               </div>
   
               <div className="daftarlognamaruangan">
-                <label> <b>Nama Ruangan</b></label> <br></br>
-                <input name="ruanganc" onChange={this.handleChange} className="inputdaftarlogpintu" type="text" placeholder="Nama Ruangan" required ></input>
+                <label> <b>ID Ruangan</b></label> <br></br>
+                <input name="ruanganc" onChange={this.handleChange} className="inputdaftarlogpintu" type="text" placeholder="ID Ruangan" required ></input>
               </div> 
               
               <div className="daftarlogmethod">
@@ -599,17 +737,34 @@ class Logpintu extends Component{
               <input name="searching" onChange={this.handleChange} className="inputfilterlogpintu" type="text" placeholder="Cari data" required></input>
             </div>
           </div>
-          <div className="paddingtop50px"></div>
-          {/* <div className="tombolfilterlogpintu">
+          <div className="pagedata">
+            <div className="tampilkanpage">
+              <b>Tampilkan&nbsp;&nbsp;</b>
+              <select name="pagesize" onChange={this.handleChange} className="inputfilterpagelogpintu" required>
+                  <option value={10}> 10 </option>
+                  <option value={20}> 20 </option>
+                  <option value={30}> 30 </option>
+                  <option value={40}> 40 </option>
+                  <option value={50}> 50 </option>
+                  <option value={100}> 100 </option>
+              </select>
+              <b>&nbsp;&nbsp;data/halaman</b>
+            </div>
+            <div className="tampilkantotal">
+              <b>Total data : &nbsp;</b>
+              <b>{limit}</b>
+            </div>
+          </div>
+          <div className="tombolfilterlogpintu">
             <div className="filterlogpintu">
-              <a onClick={() => this.findData()}>
+              <a onClick={() => this.refresh()}>
                 <div className="daftar">
                   <i className="fa fa-search"></i> 
                   <span><b>Filter</b></span>
                 </div>
               </a>
             </div>
-          </div> */}
+          </div>
           <div className="isitabel">
             <MDBDataTable
             responsive
@@ -628,36 +783,19 @@ class Logpintu extends Component{
           </div> 
           <div className="pagedata">
             { showPrevious&& 
-              <button className="pagesebelumnya" onClick={() => this.previous()}>≪ Sebelumnya</button>
+              <button className="pagesebelumnya" onClick={() => this.previous(pagee-1)}>≪ Sebelumnya</button>
             }
             { (showPrevious===false)&& 
               <button className="pagesebelumnyanone">≪ Sebelumnya</button>
             }
             {
               showNext&&
-              <button className="pageberikutnya" onClick={() => this.next()}>Berikutnya ≫</button>
+              <button className="pageberikutnya" onClick={() => this.next(pagee+1)}>Berikutnya ≫</button>
             }
             {
               (showNext===false)&&
               <button className="pageberikutnyanone">Berikutnya ≫</button>
             }
-            
-            <div className="tampilkanpage">
-              <b>Tampilkan&nbsp;&nbsp;</b>
-              <select name="pagesize" onChange={this.handleChange} className="inputfilterpagelogpintu" required>
-                  <option value={10}> 10 </option>
-                  <option value={20}> 20 </option>
-                  <option value={30}> 30 </option>
-                  <option value={40}> 40 </option>
-                  <option value={50}> 50 </option>
-                  <option value={100}> 100 </option>
-              </select>
-              <b>&nbsp;&nbsp;data/halaman</b>
-            </div>
-            <div className="tampilkantotal">
-              <b>Total data : &nbsp;</b>
-              <b>{limit}</b>
-            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import Header from './components/Header';
 import SideBar from './components/SideBar';
 import Content from './components/Content';
 import Login from './components/content/login';
+import get from './components/content/config';
 import {Route, Redirect, withRouter} from "react-router-dom";
 import './components/content/css/AdminLTE.css';
 import './components/content/css/_all-skins.min.css';
@@ -13,10 +14,10 @@ import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
 
 class App extends Component {
-    render(){ 
+    render(){
       //fungsi refresh token
       function refreshToken(){
-          fetch('http://192.168.2.7:8020/api-token-refresh/', {
+          fetch(get.refreshtoken, {
             method: 'post',
             headers :{"Content-Type" : "application/json"},
             body: JSON.stringify({

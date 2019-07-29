@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
 import {withRouter} from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import get from './config';
 
 class Ruanganuser extends Component{
   constructor(props) {
@@ -27,13 +28,14 @@ class Ruanganuser extends Component{
   handleSubmitDaftar(e){
     e.preventDefault();
     const {nimc,idc} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/createPermission/', {
+    fetch(get.adduserroom, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         nim: nimc,
         id_ruangan: idc
       })
@@ -50,10 +52,10 @@ class Ruanganuser extends Component{
     })
   }
 
-  componentDidUpdate(){
+  refresh(){
     const {idl} = this.state
     if (idl!==''){
-      fetch('http://192.168.2.7:8020/doorlog/users/', {
+      fetch(get.listuserroom, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -68,17 +70,18 @@ class Ruanganuser extends Component{
     }
   }
 
-  deleteData(e){
+  deleteData(e,f){
     const {idl} = this.state
-    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e);
+    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e+", Nama Pengguna= "+f);
     if (yes === true){
-      fetch('http://192.168.2.7:8020/doorlog/deletePermission/', {
+      fetch(get.deleteuserroom, {
         method: 'post',
         headers :{
           "Authorization" : "Bearer "+ sessionStorage.name,
           "Content-Type" : "application/json"
         },
         body: JSON.stringify({
+          user_id: sessionStorage.user,
           nim: e,
           id_ruangan: idl
           })
@@ -136,9 +139,9 @@ class Ruanganuser extends Component{
       rows: this.state.isidata.map(isi=>{
         return {
           no:no(x++),
-          nim: isi.nim,
-          namapengguna:isi.pengguna,
-          hapus:<div className="editdelete"> <a className="mousepointer" onClick={() => this.deleteData(isi.pengguna)}> <i className="fa fa-trash"></i></a> </div>
+          nim: isi.pengguna,
+          namapengguna:isi.pengguna__nama,
+          hapus:<div className="editdelete"> <a className="mousepointer" onClick={() => this.deleteData(isi.pengguna,isi.pengguna__nama)}> <i className="fa fa-trash"></i></a> </div>
         }
       })
     };
@@ -199,10 +202,9 @@ class Ruanganuser extends Component{
               </div>
               <div className="cariidruangan">
                 <div className="optionruanganuser">
-                  <b style={{color: "#E43A34"}}> ID Ruangan &nbsp;</b>
                   <input className="inputoptionruanganuser" name="idl" onChange={this.handleChange} type="text" placeholder="Masukan ID Ruangan..."></input>
                 </div>
-                {/* <div>
+                <div>
                   <span>
                     <a onClick={() => this.refresh()}>
                       <div className="cari">
@@ -210,7 +212,7 @@ class Ruanganuser extends Component{
                       </div>
                     </a>
                   </span>
-                </div> */}
+                </div>
               </div>
             </div> 
           }

@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
 import {withRouter} from "react-router-dom";
+import get from './config';
 
 class Device extends Component{
   constructor(props) {
@@ -9,6 +10,7 @@ class Device extends Component{
       isidata: [],
       daftar: false,
       edit:false,
+      editID:'',
       idc:'',
       ipc:'',
       portrc: '',
@@ -17,6 +19,7 @@ class Device extends Component{
       ipu:'',
       portsu:'',
       portru:'',
+      portss:'',
       datasalah: false,
       databenar: false,
     };
@@ -33,13 +36,14 @@ class Device extends Component{
   handleSubmitDaftar(e){
     e.preventDefault();
     const {idc,ipc,portrc,portsc} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/regdevais/', {
+    fetch(get.adddevice, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         id_ruangan: idc,
         ip_reader: ipc,
         port_reader:portrc,
@@ -60,21 +64,24 @@ class Device extends Component{
 
   handleSubmitEdit(e){
     e.preventDefault();
-    const {idu,portsu,ipu,portru} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/editdevais/', {
+    const {idu,portsu,ipu,portru,editID} = this.state
+    fetch(get.editdevice, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
-        port_server_used:portsu,
+        user_id: sessionStorage.user,
+        device_id: editID,
+        new_port_server_used:portsu,
         new_id_ruangan: idu,
         new_ip_reader: ipu,
-        new_port_reader: portru,
+        new_port_client: portru,
       })
     })
     .then(response => {
+      console.log(response)
       if (response.ok){
         this.setState({databenar:true})
         this.setState({datasalah:false})
@@ -87,7 +94,7 @@ class Device extends Component{
   }
 
   componentDidMount(){
-    fetch('http://192.168.2.7:8020/doorlog/listdevais/', {
+    fetch(get.listdevice, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -98,8 +105,8 @@ class Device extends Component{
     .then (response =>this.setState({isidata:response.list}))
   }
 
-  componentDidUpdate(){
-    fetch('http://192.168.2.7:8020/doorlog/listdevais/', {
+  refresh(){
+    fetch(get.listdevice, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -110,17 +117,18 @@ class Device extends Component{
     .then (response =>this.setState({isidata:response.list}))
   }
 
-  deleteData(e){
-    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: Port Server = " +e);
+  deleteData(e,f,g,h,i){
+    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: ID = " +e+", Port Server = "+f+", IP Reader = "+g+", Port Reader = "+h+", ID Ruangan = "+i);
     if (yes === true){
-      fetch('http://192.168.2.7:8020/doorlog/deldevais/', {
+      fetch(get.deletedevice, {
         method: 'post',
         headers :{
           "Authorization" : "Bearer "+ sessionStorage.name,
           "Content-Type" : "application/json"
         },
         body: JSON.stringify({
-          port_server_used: e
+          user_id: sessionStorage.user,
+          device_id: e
           })
       })
       .then(response=>{
@@ -134,8 +142,40 @@ class Device extends Component{
     }
   }
 
+  start(a){
+    if (a!==''){
+      fetch(get.startdevice, {
+        method: 'post',
+        headers :{
+          "Authorization" : "Bearer "+ sessionStorage.name,
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          port_server_used: a
+          })
+      })
+      .then(response=>console.log(response))
+    }
+  }
+  stop(a){
+    if (a!==''){
+      fetch(get.stopdevice, {
+        method: 'post',
+        headers :{
+          "Authorization" : "Bearer "+ sessionStorage.name,
+          "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+          port_server_used: a
+          })
+      })
+      .then(response=>console.log(response))
+    }
+  }
+
   showDaftar(){
     this.setState({daftar:true})
+    this.setState({edit:false})
   }
   hideDaftar(){
     this.setState({daftar:false})
@@ -143,9 +183,14 @@ class Device extends Component{
     this.setState({databenar:false})
   }
 
-  showEdit(a){
+  showEdit(a,b,c,d,e){
     this.setState({edit:true})
-    this.setState({portsu:a})
+    this.setState({daftar:false})
+    this.setState({editID:a})
+    this.setState({portsu:b})
+    this.setState({ipu:c})
+    this.setState({portru:d})
+    this.setState({idu:e})
   }
   hideEdit(){
     this.setState({edit:false})
@@ -154,7 +199,13 @@ class Device extends Component{
   }
 
   render(){
-    const {idc,daftar,edit,databenar,datasalah,portsu} = this.state
+    const {idc,daftar,edit,databenar,datasalah,portss} = this.state
+    const {idu,ipu,portsu,portru,editID} = this.state
+    let iduu,ipuu,portsuu,portruu;
+    iduu = idu;
+    ipuu = ipu;
+    portruu = portru;
+    portsuu = portsu;
     var x = 1;
     function no(i){
       var m=0
@@ -212,7 +263,7 @@ class Device extends Component{
           portreader:isi.port_reader,
           idruangan:isi.ruangan_id,
           status:isi.status,
-          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.port_server_used)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.port_server_used)}> <i className="fa fa-trash"></i></a> </div>
+          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.id,isi.port_server_used,isi.ip_reader,isi.port_reader,isi.ruangan_id)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.id,isi.port_server_used,isi.ip_reader,isi.port_reader,isi.ruangan_id)}> <i className="fa fa-trash"></i></a> </div>
         }
       })
     };
@@ -277,7 +328,7 @@ class Device extends Component{
             {
               edit &&
               <div className="kotakdaftar"> 
-              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
+              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitEdit}>
                 {
                   databenar && 
                   <span className="texthijau">*Data berhasil disimpan</span>
@@ -289,22 +340,22 @@ class Device extends Component{
               
                 <div className="kotakinputpenggunascardid">
                   <label> Port Server </label><br></br>
-                  <input onChange={this.handleChange} className="inputformpenggunascardid" type="text" placeholder="Port Server" value={portsu} required></input>
+                  <input name="portsu" onChange={this.handleChange} className="inputformpenggunascardid" type="text" placeholder="Port Server" value={portsuu} required></input>
                 </div>
 
                 <div className="kotakinputpenggunanim">
                   <label> IP Reader</label><br></br>
-                  <input name="ipu" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="IP Reader" required ></input>
+                  <input name="ipu" onChange={this.handleChange} className="inputformpenggunanim" type="text" placeholder="IP Reader" value={ipuu} required ></input>
                 </div> 
 
                 <div className="kotakinputpenggunanama">
                   <label> Port Reader</label><br></br>
-                  <input name="portru" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Port Reader" required ></input>
+                  <input name="portru" onChange={this.handleChange} className="inputformpenggunanama" type="text" placeholder="Port Reader" value={portruu} required ></input>
                 </div>
 
                 <div className="kotakinputpenggunainstansi">
                   <label> ID Ruangan</label><br></br>
-                  <input name="idu" onChange={this.handleChange} className="inputformpenggunainstansi" type="text" placeholder="ID Ruangan" required ></input>
+                  <input name="idu" onChange={this.handleChange} className="inputformpenggunainstansi" type="text" placeholder="ID Ruangan" value={idu} required ></input>
                 </div>
 
                 <div className="kotaksubmitdevice">
@@ -327,13 +378,13 @@ class Device extends Component{
                     <span><b>Device</b></span>
                   </div>
                 </a>
-                {/* <span>
+                <span>
                   <a onClick={() => this.refresh()}>
                     <div className="daftar2">
                       <i className="fa fa-refresh"></i>
                     </div>
                   </a>
-                </span> */}
+                </span>
           </div>
           }
           <div id={aksidata} className="kotakdata">
@@ -350,7 +401,16 @@ class Device extends Component{
                 theadColor={""}
                 data={data}
                 />
-              </div>  
+              </div> 
+              <div className="kotakisigrafik">
+                <div>
+                  <input name="portss" onChange={this.handleChange} className="inputportssdevice" type="text" placeholder="Port Server ..."></input>
+                </div>&nbsp;&nbsp;
+                <div>
+                  <button className="backgroundbiru" onClick={() => this.start(portss)}>Start</button>&nbsp;
+                  <button className="backgroundmerah" onClick={() => this.stop(portss)}>Stop</button>
+                </div> 
+              </div>
           </div>
       </div>
     )

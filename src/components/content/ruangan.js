@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
 import {withRouter} from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import get from './config';
 
 class Ruangan extends Component{
   constructor(props) {
@@ -30,13 +31,14 @@ class Ruangan extends Component{
   handleSubmitDaftar(e){
     e.preventDefault();
     const {idc,namac} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/registerRoom/', {
+    fetch(get.addroom, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         id_ruangan: idc,
         nama_ruangan: namac
       })
@@ -56,13 +58,14 @@ class Ruangan extends Component{
   handleSubmitEdit(e){
     e.preventDefault();
     const {idu,namau} = this.state
-    fetch('http://192.168.2.7:8020/doorlog/editRoom/', {
+    fetch(get.editroom, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
         "Content-Type" : "application/json"
       },
       body: JSON.stringify({
+        user_id: sessionStorage.user,
         id_ruangan: idu,
         nama_ruangan_baru: namau
       })
@@ -80,7 +83,7 @@ class Ruangan extends Component{
   }
 
   componentDidMount(){
-    fetch('http://192.168.2.7:8020/doorlog/rooms/', {
+    fetch(get.listroom, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -91,8 +94,8 @@ class Ruangan extends Component{
     .then (response =>this.setState({isidata:response.list}))
   }
 
-  componentDidUpdate(){
-    fetch('http://192.168.2.7:8020/doorlog/rooms/', {
+  refresh(){
+    fetch(get.listroom, {
       method: 'post',
       headers :{
         "Authorization" : "Bearer "+ sessionStorage.name,
@@ -106,13 +109,14 @@ class Ruangan extends Component{
   deleteData(e,f){
     var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: ID Ruangan = " +e+", Nama Ruangan= "+f);
     if (yes === true){
-      fetch('http://192.168.2.7:8020/doorlog/deleteRoom/', {
+      fetch(get.deleteroom, {
         method: 'post',
         headers :{
           "Authorization" : "Bearer "+ sessionStorage.name,
           "Content-Type" : "application/json"
         },
         body: JSON.stringify({
+          user_id: sessionStorage.user,
           id_ruangan: e
           })
       })
@@ -129,6 +133,7 @@ class Ruangan extends Component{
 
   showDaftar(){
     this.setState({daftar:true})
+    this.setState({edit:false})
   }
   hideDaftar(){
     this.setState({daftar:false})
@@ -136,9 +141,11 @@ class Ruangan extends Component{
     this.setState({databenar:false})
   }
 
-  showEdit(a){
+  showEdit(a,b){
     this.setState({edit:true})
+    this.setState({daftar:false})
     this.setState({idu:a})
+    this.setState({namau:b})
   }
   hideEdit(){
     this.setState({edit:false})
@@ -147,7 +154,7 @@ class Ruangan extends Component{
   }
 
   render(){
-    const {daftar,edit,databenar,datasalah,idu} = this.state
+    const {daftar,edit,databenar,datasalah,idu,namau} = this.state
     var x = 1;
     function no(i){
       var m=0
@@ -181,7 +188,7 @@ class Ruangan extends Component{
           no:no(x++),
           idruangan: isi.kode_ruangan,
           namaruangan:isi.nama_ruangan,
-          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.kode_ruangan)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.kode_ruangan,isi.nama_ruangan)}> <i className="fa fa-trash"></i></a> </div>
+          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.kode_ruangan, isi.nama_ruangan)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.kode_ruangan,isi.nama_ruangan)}> <i className="fa fa-trash"></i></a> </div>
         }
       })
     };
@@ -253,7 +260,7 @@ class Ruangan extends Component{
 
                   <div className="labelinputnamaruangan">
                     <label> Nama Ruangan</label><br></br>
-                    <input name="namau" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Ruangan" required ></input>
+                    <input name="namau" onChange={this.handleChange} className="inputnamaruangan" type="text" placeholder="Nama Ruangan" value={namau} required ></input>
                   </div> 
 
                   <div className="kotaksubmitpengguna">
@@ -276,13 +283,13 @@ class Ruangan extends Component{
                     <span><b>Ruangan</b></span>
                   </div>
                 </a>
-                {/* <span>
+                <span>
                   <a onClick={() => this.refresh()}>
                     <div className="daftar2">
                       <i className="fa fa-refresh"></i>
                     </div>
                   </a>
-                </span> */}
+                </span>
           </div>
           }
           <div id={aksidata} className="kotakdata">

@@ -3732,7 +3732,7 @@ a:focus {
   color: white;
   border: 2px solid #E43A34;
   margin-top: -27px;
-  margin-left: 250px;
+  margin-left: 150px;
   margin-bottom: 30px;
 }
 .cari:hover{
@@ -3895,7 +3895,8 @@ a:focus {
 
 .pagedata{
   margin-top: 10px;
-  font-size: 13px;
+  font-size: 15px;
+  margin-bottom: 30px;
 }
 
 .pagesebelumnya{
@@ -3943,6 +3944,7 @@ a:focus {
 .tampilkanpage{
   display: block;
   text-align: center;
+  margin-top: 40px;
 }
 
 .tampilkantotal{
@@ -3958,7 +3960,7 @@ a:focus {
 }
 
 .tombolfilterlogpintu{
-  margin-top: 40px;
+  margin-top: -20px;
   margin-bottom: 20px;
 }
 
@@ -3968,6 +3970,36 @@ a:focus {
   align-items: center;
 }
 
+.marginbottom20px{
+  margin-bottom: 20px;
+}
+.marginbottom10px{
+  margin-bottom: 20px;
+}
+
+.backgroundmerah{
+  border-radius: 5px;
+  border: none;
+  color: white;
+  background-color: red;
+}
+.backgroundbiru{
+  border-radius: 5px;
+  border: none;
+  color: white;
+  background-color: blue;
+}
+
+.inputportssdevice{
+  border: none;
+  width: 80px;
+  text-align: center;
+  border-bottom: solid 1px rgb(175, 175, 175);
+}
+
+.inputportssdevice::placeholder{
+  color: rgb(175, 175, 175);
+}
 
 
 
