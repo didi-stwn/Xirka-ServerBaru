@@ -1,9 +1,6 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
-import {Route,Link,withRouter,Switch} from "react-router-dom";
-import Daftarclient from './daftardevice';
-import Editclient from './editdevice';
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import {withRouter} from "react-router-dom";
 
 class Device extends Component{
   constructor(props) {
@@ -89,7 +86,7 @@ class Device extends Component{
     })
   }
 
-  componentWillMount(){
+  componentDidMount(){
     fetch('http://192.168.2.7:8020/doorlog/listdevais/', {
       method: 'post',
       headers :{
@@ -142,6 +139,8 @@ class Device extends Component{
   }
   hideDaftar(){
     this.setState({daftar:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
   }
 
   showEdit(a){
@@ -150,10 +149,12 @@ class Device extends Component{
   }
   hideEdit(){
     this.setState({edit:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
   }
 
   render(){
-    const {daftar,edit,databenar,datasalah,portsu} = this.state
+    const {idc,daftar,edit,databenar,datasalah,portsu} = this.state
     var x = 1;
     function no(i){
       var m=0
@@ -326,6 +327,13 @@ class Device extends Component{
                     <span><b>Device</b></span>
                   </div>
                 </a>
+                {/* <span>
+                  <a onClick={() => this.refresh()}>
+                    <div className="daftar2">
+                      <i className="fa fa-refresh"></i>
+                    </div>
+                  </a>
+                </span> */}
           </div>
           }
           <div id={aksidata} className="kotakdata">

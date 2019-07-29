@@ -24,7 +24,7 @@ class Header extends Component {
             return(<span><b>Laporan</b></span>)
         }
         function Ruanganuser(){
-            return(<span><b>Ruangan Pengguna</b></span>)
+            return(<span><b>Pengguna</b></span>)
         }
         function Device(){
             return(<span><b>Device</b></span>)

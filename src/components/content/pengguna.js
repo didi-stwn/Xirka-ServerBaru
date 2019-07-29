@@ -1,7 +1,6 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
-import {Route, Link,withRouter,Switch} from "react-router-dom";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import {withRouter} from "react-router-dom";
 
 
 class Pengguna extends Component{
@@ -80,7 +79,7 @@ class Pengguna extends Component{
     })
   }
 
-  componentWillMount(){
+  componentDidMount(){
     fetch('http://192.168.2.7:8020/doorlog/allusers/', {
       method: 'post',
       headers :{
@@ -133,6 +132,8 @@ class Pengguna extends Component{
   }
   hideDaftar(){
     this.setState({daftar:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
   }
 
   showEdit(a){
@@ -141,6 +142,8 @@ class Pengguna extends Component{
   }
   hideEdit(){
     this.setState({edit:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
   }
 
   render(){
@@ -272,6 +275,13 @@ class Pengguna extends Component{
                     <span><b>Pengguna</b></span>
                   </div>
                 </a>
+                {/* <span>
+                  <a onClick={() => this.refresh()}>
+                    <div className="daftar2">
+                      <i className="fa fa-refresh"></i>
+                    </div>
+                  </a>
+                </span> */}
           </div>
           }
           <div id={aksidata} className="kotakdata">

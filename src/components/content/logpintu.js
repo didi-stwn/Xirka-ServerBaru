@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
-import {withRouter,Route,Link,Switch} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 
 class Logpintu extends Component{
   constructor(props) {
@@ -13,16 +13,17 @@ class Logpintu extends Component{
       startDate: new Date('2019-07-13'),
       endDate: new Date(),
       searching:'',
+      limit:0,
       isidata: [],
       daftar:false,
       edit:false,
       nimc:'',
       ruanganc:'',
-      methodc:'',
+      methodc:1,
       nimu: '',
       ruanganu:'',
       dateu:'',
-      statusu:'',
+      statusu:1,
       datasalah: false,
       databenar: false,
     };
@@ -241,12 +242,14 @@ class Logpintu extends Component{
       }
     })
   }
-
   showDaftar(){
     this.setState({daftar:true})
   }
   hideDaftar(){
     this.setState({daftar:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
+    this.setState({methodc:1})
   }
 
   showEdit(a){
@@ -255,16 +258,124 @@ class Logpintu extends Component{
   }
   hideEdit(){
     this.setState({edit:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
+    this.setState({statusu:1})
+  }
+  next(){
+    const {pagee} = this.state
+    this.setState({pagee:(pagee+1)})
+  }
+  previous(){
+    const {pagee} = this.state
+    this.setState({pagee:(pagee-1)})
   }
 
   render(){
-    const {isidata,daftar,edit,databenar,datasalah} = this.state
-    var x = 1;
+    const {daftar,edit,databenar,datasalah,limit,pagesize,pagee} = this.state
+    var x=pagee*10-9;
+    var lim=42;
+    var maxPage=parseInt(lim/pagesize);
+    if ((lim%pagesize)!==0){
+      maxPage = maxPage+1
+    }
+    var showNext = false;
+    var showPrevious = false;
+    // deteksi page pertama
+    if (pagee===1){
+      showPrevious = false;
+      if (pagee===maxPage){
+        showNext = false;
+      }
+      else {
+        showNext = true;
+      }
+    }
+    // deteksi page terakhir
+    else if (pagee===maxPage){
+      showPrevious = true;
+      showNext = false;
+    }
+    //deteksi page ditengah
+    else {
+      showPrevious = true;
+      showNext = true;
+    }
+
     function no(i){
       var m=0
       var hasil=m+i
       return  hasil
     }
+    function tanggal(t){
+      var tahun,bulan,tanggal,tgl,date;
+      date = new Date (t)
+      tahun = String(date.getFullYear())
+      var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
+      bulan = months[(date.getMonth())]
+      tgl = date.getDate()
+      if (tgl <=9){
+        tanggal = "0"+String(tgl)
+      }
+      else {
+        tanggal = String(tgl)
+      }
+      return bulan+" "+tanggal+", "+tahun
+    }
+
+    function waktu(t){
+      var jam,menit,j,m,ampm;
+      m = parseInt(t.substring(3,5))
+      j = parseInt(t.substring(0,2))
+
+      if (((j>=0)&&(m>=0)) && ((j<=11)&&(m<=59))){
+        ampm="AM"
+      }
+      else {
+        ampm="PM"
+      }
+
+      if (m<=9){
+        menit = "0"+String(m)
+      }
+      else {
+        menit = String(m)
+      }
+      if (j===0){
+        j=j+12
+      }
+      if (j>12){
+        j=j-12
+      }
+      if (j<=9){
+        jam = "0"+String(j)
+      }
+      else {
+        jam = String(j)
+      }
+      return jam+"."+menit+" "+ampm
+    }
+
+    function status(a){
+      var hasil
+      if (a===1){
+        hasil = "Hadir"
+      }
+      else if (a===2){
+        hasil = "Absen"
+      }
+      else if (a===3){
+        hasil = "Sakit"
+      }
+      else if (a===4){
+        hasil = "Izin"
+      }
+      else if (a===5){
+        hasil = "Forbidded"
+      }
+      return hasil
+    }
+
     const data = {
       columns: [
         {
@@ -317,12 +428,12 @@ class Logpintu extends Component{
         return {
           no:no(x++),
           nim: isi.nim,
-          nama: isi.nim,
-          koderuangan: isi.nim,
-          namaruangan: isi.nim,
-          tanggal: isi.nim,
-          waktu: isi.nim,
-          status: isi.nim,
+          nama: isi.nama,
+          koderuangan: isi.kode_ruangan,
+          namaruangan: isi.nama_ruangan,
+          tanggal: tanggal(isi.date),
+          waktu: waktu(isi.time),
+          status: status(isi.status),
           method: isi.nim,
         }
       })
@@ -343,7 +454,7 @@ class Logpintu extends Component{
           daftar &&
           <div>
           <div className="kotakfilter2"> 
-            <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
+            <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
               {
                 databenar && 
                 <span className="texthijau">*Data berhasil disimpan</span>
@@ -388,7 +499,7 @@ class Logpintu extends Component{
           edit &&
           <div>
             <div className="kotakfilter2"> 
-              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmit}>
+              <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitEdit}>
                 {
                   databenar && 
                   <span className="texthijau">*Data berhasil disimpan</span>
@@ -403,7 +514,7 @@ class Logpintu extends Component{
                 </div>
                       
                 <div className="kotakinputlogpintuterminalid">
-                  <label><b>Nama Ruangan</b> </label> <br></br>
+                  <label><b>ID Ruangan</b> </label> <br></br>
                   <input name="ruanganu" onChange={this.handleChange} className="inputformlogpintuterminalid" type="text" placeholder="Terminal Id" required ></input>
                 </div>
 
@@ -414,7 +525,7 @@ class Logpintu extends Component{
                       
                 <div className="kotakinputlogpintustatus">
                   <label> <b>Status</b> </label> <br></br>
-                  <select name="lockstatus" onChange={this.handleChange} className="inputformlogpintustatus" required>
+                  <select name="statusu" onChange={this.handleChange} className="inputformlogpintustatus" required>
                     <option value="1"> Hadir</option>
                     <option value="2"> Absen </option>
                     <option value="3"> Sakit </option>
@@ -461,6 +572,11 @@ class Logpintu extends Component{
               <select name="sort" onChange={this.handleChange} className="inputfilterlogpintu" required>
                 <option value="nim"> NIM </option>
                 <option value="nama"> Nama </option>
+                <option value="kode_ruangan"> ID Ruangan </option>
+                <option value="nama_ruangan"> Nama Ruangan </option>
+                <option value="date"> Tanggal </option>
+                <option value="time"> Waktu </option>
+                <option value="status"> Status </option>
               </select>
             </div>
             <div className="filterascdsclogpintu">
@@ -483,7 +599,17 @@ class Logpintu extends Component{
               <input name="searching" onChange={this.handleChange} className="inputfilterlogpintu" type="text" placeholder="Cari data" required></input>
             </div>
           </div>
-          <div className="paddingtop40px"></div>
+          <div className="paddingtop50px"></div>
+          {/* <div className="tombolfilterlogpintu">
+            <div className="filterlogpintu">
+              <a onClick={() => this.findData()}>
+                <div className="daftar">
+                  <i className="fa fa-search"></i> 
+                  <span><b>Filter</b></span>
+                </div>
+              </a>
+            </div>
+          </div> */}
           <div className="isitabel">
             <MDBDataTable
             responsive
@@ -500,8 +626,41 @@ class Logpintu extends Component{
             data={data}
             />
           </div> 
+          <div className="pagedata">
+            { showPrevious&& 
+              <button className="pagesebelumnya" onClick={() => this.previous()}>≪ Sebelumnya</button>
+            }
+            { (showPrevious===false)&& 
+              <button className="pagesebelumnyanone">≪ Sebelumnya</button>
+            }
+            {
+              showNext&&
+              <button className="pageberikutnya" onClick={() => this.next()}>Berikutnya ≫</button>
+            }
+            {
+              (showNext===false)&&
+              <button className="pageberikutnyanone">Berikutnya ≫</button>
+            }
+            
+            <div className="tampilkanpage">
+              <b>Tampilkan&nbsp;&nbsp;</b>
+              <select name="pagesize" onChange={this.handleChange} className="inputfilterpagelogpintu" required>
+                  <option value={10}> 10 </option>
+                  <option value={20}> 20 </option>
+                  <option value={30}> 30 </option>
+                  <option value={40}> 40 </option>
+                  <option value={50}> 50 </option>
+                  <option value={100}> 100 </option>
+              </select>
+              <b>&nbsp;&nbsp;data/halaman</b>
+            </div>
+            <div className="tampilkantotal">
+              <b>Total data : &nbsp;</b>
+              <b>{limit}</b>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
     )
   } 
 }

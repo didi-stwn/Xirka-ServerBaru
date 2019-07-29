@@ -1,7 +1,6 @@
 import React,{Component} from 'react';
 import { MDBDataTable } from 'mdbreact';
-import {Route,Link,withRouter,Switch} from "react-router-dom";
-
+import {withRouter} from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 class Ruanganuser extends Component{
@@ -69,9 +68,9 @@ class Ruanganuser extends Component{
     }
   }
 
-  deleteData(e,f){
+  deleteData(e){
     const {idl} = this.state
-    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e+", ID Ruangan= "+f);
+    var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e);
     if (yes === true){
       fetch('http://192.168.2.7:8020/doorlog/deletePermission/', {
         method: 'post',
@@ -100,6 +99,8 @@ class Ruanganuser extends Component{
   }
   hideDaftar(){
     this.setState({daftar:false})
+    this.setState({datasalah:false})
+    this.setState({databenar:false})
   }
 
   render(){
@@ -137,7 +138,7 @@ class Ruanganuser extends Component{
           no:no(x++),
           nim: isi.nim,
           namapengguna:isi.pengguna,
-          hapus:<div className="editdelete"> <a className="mousepointer" onClick={() => this.deleteData(isi.nim,isi.pengguna)}> <i className="fa fa-trash"></i></a> </div>
+          hapus:<div className="editdelete"> <a className="mousepointer" onClick={() => this.deleteData(isi.pengguna)}> <i className="fa fa-trash"></i></a> </div>
         }
       })
     };
@@ -196,8 +197,20 @@ class Ruanganuser extends Component{
                   </div>
                 </a>
               </div>
-              <div className="optionruanganuser">
-                <input className="inputoptionruanganuser" name="idl" onChange={this.handleChange} type="text" placeholder="Masukan ID Ruangan..."></input>
+              <div className="cariidruangan">
+                <div className="optionruanganuser">
+                  <b style={{color: "#E43A34"}}> ID Ruangan &nbsp;</b>
+                  <input className="inputoptionruanganuser" name="idl" onChange={this.handleChange} type="text" placeholder="Masukan ID Ruangan..."></input>
+                </div>
+                {/* <div>
+                  <span>
+                    <a onClick={() => this.refresh()}>
+                      <div className="cari">
+                        <span><b>Cari</b></span>
+                      </div>
+                    </a>
+                  </span>
+                </div> */}
               </div>
             </div> 
           }

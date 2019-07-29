@@ -2914,8 +2914,8 @@ a:focus {
   padding-top: 30px;
 }
 
-.paddingtop40px{
-  padding-top: 40px;
+.paddingtop50px{
+  padding-top: 50px;
 }
 
 @media (max-width:767px){
@@ -3227,6 +3227,7 @@ a:focus {
   color: white;
   border: 2px solid #E43A34;
 }
+
 .daftar2{
   width: 30px;
   text-align: center;
@@ -3715,10 +3716,33 @@ a:focus {
     margin-top: 50px;
   }
 }
-.optionruanganuser{
-  position: absolute;
-  margin-left: 150px;
+.cariidruangan{
   margin-top: -58px;
+  margin-left: 150px;
+  margin-bottom: 30px
+}
+.cari{
+  background-color: #E43A34;
+  width: 50px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  height: 27px;
+  font-size: 15px;
+  color: white;
+  border: 2px solid #E43A34;
+  margin-top: -27px;
+  margin-left: 250px;
+  margin-bottom: 30px;
+}
+.cari:hover{
+  background-color: white;
+  color: #E43A34;
+  border: 2px solid #E43A34;
+}
+.optionruanganuser{
+  margin-top: 0px;
+  margin-left: 0px;
 }
 
 .inputoptionruanganuser{
@@ -3732,6 +3756,13 @@ a:focus {
 .inputoptionruanganuser::placeholder{
   color: red;
   font-size: 13px;
+}
+
+@media(max-width:767px){
+  .cariidruangan{
+    margin-top: 0px;
+    margin-left: 0px;
+  }
 }
 
 .filtersortlogpintu{
@@ -3757,7 +3788,7 @@ a:focus {
 .inputfilterlogpintu{
   position: absolute;
   border: none;
-  border-bottom: solid 1px #E43A34;
+  border-bottom: solid 1px rgb(199, 199, 199);
   background: transparent;
   width: 15%;
   font-size: 13px;
@@ -3862,6 +3893,80 @@ a:focus {
   }
 }
 
+.pagedata{
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.pagesebelumnya{
+  float:left;
+  background: #E43A34;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.pageberikutnya{
+  float: right;
+  background: #E43A34;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.pagesebelumnyanone{
+  float:left;
+  background: rgb(255, 95, 90);
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.pageberikutnyanone{
+  float: right;
+  background: rgb(255, 95, 90);
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.pageberikutnya:hover,.pagesebelumnya:hover{
+  background: white;
+  border: solid 1px #E43A34;
+  color: #E43A34;
+}
+
+.pageberikutnyanone:hover,.pagesebelumnyanone:hover{
+  cursor: not-allowed;
+}
+
+.tampilkanpage{
+  display: block;
+  text-align: center;
+}
+
+.tampilkantotal{
+  display: block;
+  text-align: center;
+  margin-top: 10px; 
+}
+
+.inputfilterpagelogpintu{
+  background: transparent;
+  border: none;
+  border-bottom: solid 1px rgb(199, 199, 199);
+}
+
+.tombolfilterlogpintu{
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.filterlogpintu{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 
 

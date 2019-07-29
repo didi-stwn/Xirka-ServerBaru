@@ -14,42 +14,42 @@ import "mdbreact/dist/css/mdb.css";
 
 class App extends Component {
     render(){ 
-      // //fungsi refresh token
-      // function refreshToken(){
-      //     fetch('http://192.168.2.7:8020/api-token-refresh/', {
-      //       method: 'post',
-      //       headers :{"Content-Type" : "application/json"},
-      //       body: JSON.stringify({
-      //           token: sessionStorage.name,
-      //           })
-      //     })
-      //     .then (response =>response.json())  
-      //     .then (response =>{
-      //     if (response.token==="This field is required."){
-      //       sessionStorage.removeItem("name")
-      //     }
-      //     else{
-      //       sessionStorage.setItem("name",response.token)
-      //     }
-      //   })
-      // }
+      //fungsi refresh token
+      function refreshToken(){
+          fetch('http://192.168.2.7:8020/api-token-refresh/', {
+            method: 'post',
+            headers :{"Content-Type" : "application/json"},
+            body: JSON.stringify({
+                token: sessionStorage.name,
+                })
+          })
+          .then (response =>response.json())  
+          .then (response =>{
+          if (response.token==="This field is required."){
+            sessionStorage.removeItem("name")
+          }
+          else{
+            sessionStorage.setItem("name",response.token)
+          }
+        })
+      }
 
-      // // kalau token ga ada
-      // if ((sessionStorage.name==="undefined")||(sessionStorage.name===undefined)){
-      //   return (
-      //     <div>
-      //       <Redirect to="/login" />
-      //       <Route path="/login" component={Login}/>
-      //     </div>
-      //   )
-      // }
+      // kalau token ga ada
+      if ((sessionStorage.name==="undefined")||(sessionStorage.name===undefined)){
+        return (
+          <div>
+            <Redirect to="/login" />
+            <Route path="/login" component={Login}/>
+          </div>
+        )
+      }
       
-      // //kalau token ada
-      // else {
-      //   //fungsi untuk memanggil refresh token 1 detik setelah ada sesuatu yang di klik
-      //   setTimeout(function(){refreshToken()},1000)
-      //   //fungsi untuk memanggil refresh token tiap 590 detik
-      //   setInterval(function(){refreshToken()},590000)
+      //kalau token ada
+      else {
+        //fungsi untuk memanggil refresh token 1 detik setelah ada sesuatu yang di klik
+        setTimeout(function(){refreshToken()},1000)
+        //fungsi untuk memanggil refresh token tiap 590 detik
+        setInterval(function(){refreshToken()},590000)
         return(
           <div>
             <Route path="/" component={Header} />
@@ -57,7 +57,7 @@ class App extends Component {
             <Route path="/" component={Content} />
           </div>
         ) 
-      // }
+      }
   }
 }
 
