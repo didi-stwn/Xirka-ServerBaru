@@ -3112,7 +3112,7 @@ a:focus {
   overflow-y: hidden;
 }
 
-@media (max-width:1300px){
+@media (max-width:1310px){
   .kotakruangan{
     margin-top: 30px;
     width: 23%;
@@ -3135,7 +3135,7 @@ a:focus {
   }
 }
 
-@media (max-width:1066px){
+@media (max-width:1100px){
   .kotakpengguna{
     width: 30%;
     margin-top: 30px;
@@ -3159,7 +3159,7 @@ a:focus {
   }
 }
 
-@media (max-width:906px){
+@media (max-width:916px){
   .kotakcheckout{
     margin-top: 30px;
     width: 43%;
@@ -3369,7 +3369,7 @@ a:focus {
 }
 
 .kotaksubmitlaporan{
-  margin-top: -90px;
+  margin-top: -42px;
   margin-left: 76%;
   margin-right: 14%;
 }
@@ -3974,7 +3974,7 @@ a:focus {
   margin-bottom: 20px;
 }
 .marginbottom10px{
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .backgroundmerah{
@@ -4001,7 +4001,15 @@ a:focus {
   color: rgb(175, 175, 175);
 }
 
+.pesanstartstop{
+  position: relative;
+}
 
+.pesancari{
+  position: absolute;
+  top: 25px;
+  width: 100%;
+}
 
 
 

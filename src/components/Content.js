@@ -7,6 +7,7 @@ import Pengguna from './content/pengguna';
 import Ruangan from './content/ruangan';
 import Device from './content/device';
 import Ruanganuser from './content/ruanganuser';
+import Laporan from './content/laporan';
 import Home from './content/home';
 
 
@@ -41,6 +42,7 @@ class Content extends Component {
               <Route path="/ruangan" render={ () => <Ruangan/> } />
               <Route path="/ruanganuser" render={ () => <Ruanganuser/> } />
               <Route path="/device" render={ () => <Device/> } />
+              <Route path="/laporan" render={ () => <Laporan/> } />
               <Route render={()=>
                 <div className="box-footer">
                   404 NOT FOUND

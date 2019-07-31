@@ -11,8 +11,7 @@ class Logpintu extends Component{
       ascdsc:'asc',
       pagesize: 10,
       pagee: 1,
-      x:1,
-      startDate: new Date('2019-07-13'),
+      startDate: new Date('2019-01-01'),
       endDate: new Date(),
       searching:'',
       limit:0,
@@ -26,6 +25,7 @@ class Logpintu extends Component{
       ruanganu:'',
       dateu:'',
       statusu:1,
+      pesan:'',
       datasalah: false,
       databenar: false,
     };
@@ -93,15 +93,20 @@ class Logpintu extends Component{
       })
     })
     .then (response =>response.json())  
-    .then (response =>{ console.log(response)
-      this.setState({limit:response.length})
-      this.setState({isidata:response.list})})
+    .then (response =>{ 
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({limit:response.length})
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
   refresh(){
-    const {sort,ascdsc,pagesize,pagee,startDate,endDate,searching,x}=this.state
+    const {sort,ascdsc,pagesize,pagee,startDate,endDate,searching}=this.state
     this.setState({pagee:1})
-    this.setState({x:1})
     var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
     startDatee=new Date(startDate)
     starttahun=startDatee.getFullYear()
@@ -155,7 +160,15 @@ class Logpintu extends Component{
       })
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({limit:response.length})
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
   handleSubmitDaftar(e){
@@ -173,12 +186,15 @@ class Logpintu extends Component{
         method:methodc
       })
     })
+    .then(response => response.json())
     .then(response => {
-      if (response.ok){
+      if (response.status==="created"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -238,12 +254,15 @@ class Logpintu extends Component{
         status: statusu
       })
     })
+    .then(response => response.json())
     .then(response => {
-      if (response.ok){
+      if (response.status==="created"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -251,9 +270,8 @@ class Logpintu extends Component{
   }
   
   next(a){
-    const {sort,ascdsc,pagesize,startDate,endDate,searching,pagee,x}=this.state
+    const {sort,ascdsc,pagesize,startDate,endDate,searching,pagee}=this.state
     this.setState({pagee:a})
-    this.setState({x:((pagee+1)*pagesize-(pagesize-1))})
     var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
     startDatee=new Date(startDate)
     starttahun=startDatee.getFullYear()
@@ -307,12 +325,19 @@ class Logpintu extends Component{
       })
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({limit:response.length})
+        this.setState({isidata:response.list})
+      }
+    })
   }
   previous(a){
     const {sort,ascdsc,pagesize,startDate,endDate,searching,pagee}=this.state
     this.setState({pagee:a})
-    this.setState({x:((pagee-1)*pagesize-(pagesize-1))})
     var filterstart,filterend,startDatee,endDatee,starttahun,startbulan,sb,starttanggal,st,endtahun,endbulan,eb,endtanggal,et
     startDatee=new Date(startDate)
     starttahun=startDatee.getFullYear()
@@ -366,7 +391,15 @@ class Logpintu extends Component{
       })
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({limit:response.length})
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
 
@@ -393,8 +426,7 @@ class Logpintu extends Component{
   
 
   render(){
-    const {isidata,daftar,edit,databenar,datasalah,limit,pagesize,pagee,x} = this.state
-    var i=x;
+    const {isidata,daftar,edit,databenar,datasalah,limit,pagesize,pagee,pesan} = this.state
     
     var maxPage=parseInt(limit/pagesize);
     if ((limit%pagesize)!==0){
@@ -423,11 +455,6 @@ class Logpintu extends Component{
       showNext = true;
     }
 
-    function no(i){
-      var m=0
-      var hasil=m+i
-      return  hasil
-    }
     function tanggal(t){
       var tahun,bulan,tanggal,tgl,date;
       date = new Date (t)
@@ -517,11 +544,6 @@ class Logpintu extends Component{
     const data = {
       columns: [
         {
-          label: 'No',
-          field: 'no',
-          sort: 'asc',
-        },
-        {
           label: 'NIM',
           field: 'nim',
           sort: 'asc',
@@ -564,7 +586,6 @@ class Logpintu extends Component{
       ],
       rows: this.state.isidata.map(isi=>{
         return {
-          no:no(i++),
           nim: isi.nim,
           nama: isi.nama,
           koderuangan: isi.kode_ruangan,
@@ -593,14 +614,14 @@ class Logpintu extends Component{
           <div>
           <div className="kotakfilter2"> 
             <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
-              {
-                databenar && 
-                <span className="texthijau">*Data berhasil disimpan</span>
-              }
-              {
-                datasalah &&
-                <span className="textmerah">*Data yang diinput salah</span>
-              }
+                {
+                  databenar && 
+                  <span className="texthijau">{pesan}</span>
+                }
+                {
+                  datasalah &&
+                  <span className="textmerah">{pesan}</span>
+                }
               <div className="daftarlognim">
                 <label><b>NIM</b>  </label> <br></br>
                 <input name="nimc" onChange={this.handleChange} className="inputdaftarlogpintu" type="text" placeholder="ID Ruangan" required></input>
@@ -640,11 +661,11 @@ class Logpintu extends Component{
               <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitEdit}>
                 {
                   databenar && 
-                  <span className="texthijau">*Data berhasil disimpan</span>
+                  <span className="texthijau">{pesan}</span>
                 }
                 {
                   datasalah &&
-                  <span className="textmerah">*Data yang diinput salah</span>
+                  <span className="textmerah">{pesan}</span>
                 }
                 <div className="kotakinputlogpintunim">
                   <label> <b>NIM</b> </label> <br></br>

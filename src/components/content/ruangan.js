@@ -15,6 +15,7 @@ class Ruangan extends Component{
       namac:'',
       idu:'',
       namau:'',
+      pesan:'',
       datasalah: false,
       databenar: false,
     };
@@ -43,12 +44,15 @@ class Ruangan extends Component{
         nama_ruangan: namac
       })
     })
+    .then(response => response.json())
     .then(response => {
-      if (response.ok){
+      if (response.status==="created"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -70,12 +74,15 @@ class Ruangan extends Component{
         nama_ruangan_baru: namau
       })
     })
-    .then(response => {
-      if (response.ok){
+    .then(response => response.json())
+    .then(response =>{
+      if (response.status==="updated"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -91,7 +98,14 @@ class Ruangan extends Component{
       }
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
   refresh(){
@@ -103,7 +117,14 @@ class Ruangan extends Component{
       }
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
   deleteData(e,f){
@@ -120,12 +141,13 @@ class Ruangan extends Component{
           id_ruangan: e
           })
       })
+      .then (response => response.json())
       .then(response=>{
-        if (response.ok){
-          window.alert("Data berhasil dihapus")
+        if (response.status==="deleted"){
+          window.alert(response.status)
         }
         else{
-          window.alert("Data tidak berhasil dihapus")
+          window.alert(response.status)
         }
       })
     }
@@ -154,20 +176,9 @@ class Ruangan extends Component{
   }
 
   render(){
-    const {daftar,edit,databenar,datasalah,idu,namau} = this.state
-    var x = 1;
-    function no(i){
-      var m=0
-      var hasil=m+i
-      return  hasil
-    }
+    const {daftar,edit,databenar,datasalah,idu,namau,pesan} = this.state
     const data = {
       columns: [
-        {
-          label: 'No',
-          field: 'no',
-          sort: 'asc',
-        },
         {
           label: 'ID Ruangan',
           field: 'idruangan',
@@ -185,10 +196,9 @@ class Ruangan extends Component{
       ],
       rows: this.state.isidata.map(isi=>{
         return {
-          no:no(x++),
           idruangan: isi.kode_ruangan,
           namaruangan:isi.nama_ruangan,
-          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.kode_ruangan, isi.nama_ruangan)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.kode_ruangan,isi.nama_ruangan)}> <i className="fa fa-trash"></i></a> </div>
+          keterangan:<div><button className="backgroundbiru" onClick={() => this.showEdit(isi.kode_ruangan, isi.nama_ruangan)}>Edit</button>&nbsp;<button className="backgroundmerah" onClick={() => this.deleteData(isi.kode_ruangan,isi.nama_ruangan)}>Delete</button></div>,
         }
       })
     };
@@ -212,11 +222,11 @@ class Ruangan extends Component{
               <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
                 {
                   databenar && 
-                  <span className="texthijau">*Data berhasil disimpan</span>
+                  <span className="texthijau">{pesan}</span>
                 }
                 {
                   datasalah &&
-                  <span className="textmerah">*Data yang diinput salah</span>
+                  <span className="textmerah">{pesan}</span>
                 }
               
                 <div className="labelinputidruangan">
@@ -246,11 +256,11 @@ class Ruangan extends Component{
                 <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitEdit}>
                   {
                     databenar && 
-                    <span className="texthijau">*Data berhasil disimpan</span>
+                    <span className="texthijau">{pesan}</span>
                   }
                   {
                     datasalah &&
-                    <span className="textmerah">*Data yang diinput salah</span>
+                    <span className="textmerah">{pesan}</span>
                   }
                 
                   <div className="labelinputidruangan">

@@ -49,8 +49,15 @@ class App extends Component {
       else {
         //fungsi untuk memanggil refresh token 1 detik setelah ada sesuatu yang di klik
         setTimeout(function(){refreshToken()},1000)
-        //fungsi untuk memanggil refresh token tiap 590 detik
-        setInterval(function(){refreshToken()},590000)
+        //fungsi untuk memanggil refresh token tiap 590 detik sebanyak 6 kali
+        var x=0;
+        var refresh = setInterval(function(){
+          refreshToken()
+          if (x++===1){
+            window.clearInterval(refresh)
+          }
+        },590000)
+
         return(
           <div>
             <Route path="/" component={Header} />

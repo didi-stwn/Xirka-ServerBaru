@@ -10,6 +10,7 @@ class SideBar extends Component {
         var ruangan=false
         var ruanganuser=false
         var device=false
+        var laporan=false
         if (window.location.pathname==="/statistik"){
             statistik=true
         }
@@ -27,6 +28,9 @@ class SideBar extends Component {
         }
         else if (window.location.pathname==="/device"){
             device=true
+        }
+        else if (window.location.pathname==="/laporan"){
+            laporan=true
         }
         return (
             <div className="main-sidebar">
@@ -139,6 +143,22 @@ class SideBar extends Component {
                                         <Link to="/device">
                                             <i className="fa fa-credit-card"></i> 
                                             <span>Device</span>
+                                        </Link>
+                                    }
+                                </li>
+                                <li>
+                                    {
+                                        laporan &&
+                                        <Link to="/laporan" className="dipilih">
+                                            <i className="fa fa-calendar"></i> 
+                                            <span>Laporan</span>
+                                        </Link>
+                                    }
+                                    {
+                                        (laporan===false) &&
+                                        <Link to="/laporan">
+                                            <i className="fa fa-calendar"></i> 
+                                            <span>Laporan</span>
                                         </Link>
                                     }
                                 </li>

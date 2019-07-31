@@ -13,8 +13,10 @@ class Ruanganuser extends Component{
         daftar: false,
         nimc:'',
         idc:'',
+        pesan:'',
         datasalah: false,
         databenar: false,
+        carisalah: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmitDaftar = this.handleSubmitDaftar.bind(this);
@@ -40,12 +42,15 @@ class Ruanganuser extends Component{
         id_ruangan: idc
       })
     })
+    .then(response=>response.json())
     .then(response => {
-      if (response.ok){
+      if (response.status==="created"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -53,8 +58,8 @@ class Ruanganuser extends Component{
   }
 
   refresh(){
-    const {idl} = this.state
-    if (idl!==''){
+    const {idl,pesan} = this.state
+    if ((idl!==' ')&&(idl!=='')){
       fetch(get.listuserroom, {
       method: 'post',
       headers :{
@@ -64,14 +69,34 @@ class Ruanganuser extends Component{
       body: JSON.stringify({
         id_ruangan: idl,
       })
-    })
-    .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+      })
+      .then (response =>response.json())  
+      .then (response =>{
+        if (response.status==="room not exists"){
+          this.setState({isidata:[]})
+          this.setState({pesan:response.status})
+          this.setState({carisalah:true})
+        }
+        else if(response.list===undefined){
+          this.setState({pesan:response.status})
+          this.setState({carisalah:true})
+        }
+        else if(response.list.length===0){
+          var a="user not exists"
+          this.setState({pesan:a})
+          this.setState({carisalah:true})
+        }
+        else if(response.list.length!==0){
+          this.setState({isidata:response.list})
+          this.setState({carisalah:false})
+        }
+      })
     }
   }
 
   deleteData(e,f){
     const {idl} = this.state
+    this.setState({carisalah:false})
     var yes = window.confirm("Apakah anda yakin ingin menghapus data berikut: NIM = " +e+", Nama Pengguna= "+f);
     if (yes === true){
       fetch(get.deleteuserroom, {
@@ -86,12 +111,13 @@ class Ruanganuser extends Component{
           id_ruangan: idl
           })
       })
+      .then (response => response.json())
       .then(response=>{
-        if (response.ok){
-          window.alert("Data berhasil dihapus")
+        if (response.status==="deleted"){
+          window.alert(response.status)
         }
         else{
-          window.alert("Data tidak berhasil dihapus")
+          window.alert(response.status)
         }
       })
     }
@@ -107,20 +133,9 @@ class Ruanganuser extends Component{
   }
 
   render(){
-    const {daftar,databenar,datasalah} = this.state
-    var x = 1;
-    function no(i){
-      var m=0
-      var hasil=m+i
-      return  hasil
-    }
+    const {daftar,databenar,datasalah,pesan,carisalah,idl} = this.state
     const data = {
       columns: [
-        {
-          label: 'No',
-          field: 'no',
-          sort: 'asc',
-        },
         {
           label: 'NIM',
           field: 'nim',
@@ -138,10 +153,9 @@ class Ruanganuser extends Component{
       ],
       rows: this.state.isidata.map(isi=>{
         return {
-          no:no(x++),
           nim: isi.pengguna,
           namapengguna:isi.pengguna__nama,
-          hapus:<div className="editdelete"> <a className="mousepointer" onClick={() => this.deleteData(isi.pengguna,isi.pengguna__nama)}> <i className="fa fa-trash"></i></a> </div>
+          hapus:<div><button className="backgroundmerah" onClick={() => this.deleteData(isi.pengguna,isi.pengguna__nama)}>Delete</button></div>,
         }
       })
     };
@@ -161,11 +175,11 @@ class Ruanganuser extends Component{
               <form className="kotakforminputlogpintu" onSubmit={this.handleSubmitDaftar}>
                 {
                   databenar && 
-                  <span className="texthijau">*Data berhasil disimpan</span>
+                  <span className="texthijau">{pesan}</span>
                 }
                 {
                   datasalah &&
-                  <span className="textmerah">*Data yang diinput salah</span>
+                  <span className="textmerah">{pesan}</span>
                 }
               
                 <div className="labelinputidruangan">
@@ -202,7 +216,7 @@ class Ruanganuser extends Component{
               </div>
               <div className="cariidruangan">
                 <div className="optionruanganuser">
-                  <input className="inputoptionruanganuser" name="idl" onChange={this.handleChange} type="text" placeholder="Masukan ID Ruangan..."></input>
+                  <input className="inputoptionruanganuser" name="idl" onChange={this.handleChange} type="text" value={idl} placeholder="Masukan ID Ruangan..."></input>
                 </div>
                 <div>
                   <span>
@@ -213,6 +227,12 @@ class Ruanganuser extends Component{
                     </a>
                   </span>
                 </div>
+                {
+                  carisalah &&
+                  <div className="pesancari">
+                    <span className="textmerah">{pesan}</span>
+                  </div>
+                }
               </div>
             </div> 
           }

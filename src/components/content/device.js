@@ -20,8 +20,11 @@ class Device extends Component{
       portsu:'',
       portru:'',
       portss:'',
+      pesan:'',
       datasalah: false,
       databenar: false,
+      portssbenar: false,
+      portsssalah: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmitDaftar = this.handleSubmitDaftar.bind(this);
@@ -50,12 +53,15 @@ class Device extends Component{
         port_server_used:portsc
       })
     })
+    .then(response => response.json())
     .then(response => {
-      if (response.ok){
+      if (response.status==="created"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -80,13 +86,15 @@ class Device extends Component{
         new_port_client: portru,
       })
     })
-    .then(response => {
-      console.log(response)
-      if (response.ok){
+    .then(response => response.json())
+    .then(response =>{
+      if (response.status==="updated"){
+        this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
       }
       else {
+        this.setState({pesan:response.status})
         this.setState({datasalah:true})
         this.setState({databenar:false})
       }
@@ -102,7 +110,14 @@ class Device extends Component{
       }
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
   refresh(){
@@ -114,7 +129,14 @@ class Device extends Component{
       }
     })
     .then (response =>response.json())  
-    .then (response =>this.setState({isidata:response.list}))
+    .then (response =>{
+      if (response.detail==="Signature has expired."){
+        sessionStorage.removeItem("name")
+      }
+      else{
+        this.setState({isidata:response.list})
+      }
+    })
   }
 
   deleteData(e,f,g,h,i){
@@ -131,12 +153,13 @@ class Device extends Component{
           device_id: e
           })
       })
-      .then(response=>{
-        if (response.ok){
-          window.alert("Data berhasil dihapus")
+      .then (response => response.json())
+      .then(response=>{ 
+        if (response.status==="deleted"){
+          window.alert(response.status)
         }
         else{
-          window.alert("Data tidak berhasil dihapus")
+          window.alert(response.status)
         }
       })
     }
@@ -154,7 +177,28 @@ class Device extends Component{
           port_server_used: a
           })
       })
-      .then(response=>console.log(response))
+      .then(response => response.json())
+      .then(response=>{
+        if(response.status==="started"){
+          this.setState({pesan:response.status})
+          this.setState({portssbenar:true})
+          this.setState({portsssalah:false})
+          fetch(get.listdevice, {
+            method: 'post',
+            headers :{
+              "Authorization" : "Bearer "+ sessionStorage.name,
+              "Content-Type" : "application/json"
+            }
+          })
+          .then (response =>response.json())  
+          .then (response =>this.setState({isidata:response.list}))
+        }
+        else{
+          this.setState({pesan:response.status})
+          this.setState({portssbenar:false})
+          this.setState({portsssalah:true})
+        }
+      })
     }
   }
   stop(a){
@@ -169,7 +213,28 @@ class Device extends Component{
           port_server_used: a
           })
       })
-      .then(response=>console.log(response))
+      .then(response => response.json())
+      .then(response=>{
+        if((response.status==="stopped")||(response.status==="[Errno 3] No such process")){
+          this.setState({pesan:response.status})
+          this.setState({portssbenar:true})
+          this.setState({portsssalah:false})
+          fetch(get.listdevice, {
+            method: 'post',
+            headers :{
+              "Authorization" : "Bearer "+ sessionStorage.name,
+              "Content-Type" : "application/json"
+            }
+          })
+          .then (response =>response.json())  
+          .then (response =>this.setState({isidata:response.list}))
+        }
+        else{
+          this.setState({pesan:response.status})
+          this.setState({portssbenar:false})
+          this.setState({portsssalah:true})
+        }
+      })
     }
   }
 
@@ -199,31 +264,15 @@ class Device extends Component{
   }
 
   render(){
-    const {idc,daftar,edit,databenar,datasalah,portss} = this.state
+    const {idc,daftar,edit,databenar,datasalah,portss, portssbenar, portsssalah, pesan} = this.state
     const {idu,ipu,portsu,portru,editID} = this.state
     let iduu,ipuu,portsuu,portruu;
     iduu = idu;
     ipuu = ipu;
     portruu = portru;
     portsuu = portsu;
-    var x = 1;
-    function no(i){
-      var m=0
-      var hasil=m+i
-      return  hasil
-    }
     const data = {
       columns: [
-        {
-          label: 'No',
-          field: 'no',
-          sort: 'asc',
-        },
-        {
-          label: 'ID',
-          field: 'id',
-          sort: 'asc',
-        },
         {
           label: 'Port Server',
           field: 'portserver',
@@ -252,18 +301,21 @@ class Device extends Component{
         {
           label: 'Keterangan',
           field: 'keterangan'
+        },
+        {
+          label: 'Start/Stop',
+          field: 'startstop'
         }
       ],
       rows: this.state.isidata.map(isi=>{
         return {
-          no:no(x++),
-          id:isi.id,
           portserver:isi.port_server_used,
           ipreader:isi.ip_reader,
           portreader:isi.port_reader,
           idruangan:isi.ruangan_id,
           status:isi.status,
-          keterangan:<div className="editdelete"> <a onClick={() => this.showEdit(isi.id,isi.port_server_used,isi.ip_reader,isi.port_reader,isi.ruangan_id)}><i className="fa fa-pencil"></i></a> | <a className="mousepointer" onClick={() => this.deleteData(isi.id,isi.port_server_used,isi.ip_reader,isi.port_reader,isi.ruangan_id)}> <i className="fa fa-trash"></i></a> </div>
+          keterangan:<div><button className="backgroundbiru" onClick={() => this.showEdit(isi.id,isi.port_server_used,isi.ip_reader,isi.port_reader,isi.ruangan_id)}>Edit</button>&nbsp;<button className="backgroundmerah" onClick={() => this.deleteData(isi.id,isi.port_server_used,isi.ip_reader,isi.port_reader,isi.ruangan_id)}>Delete</button></div>,
+          startstop:<div><button className="backgroundbiru" onClick={() => this.start(isi.port_server_used)}>Start</button>&nbsp;<button className="backgroundmerah" onClick={() => this.stop(isi.port_server_used)}>Stop</button></div>
         }
       })
     };
@@ -388,6 +440,14 @@ class Device extends Component{
           </div>
           }
           <div id={aksidata} className="kotakdata">
+              {
+                portssbenar && 
+                <span className="texthijau"><b>*{pesan}</b></span>
+              }
+              {
+                portsssalah &&
+                <span className="textmerah"><b>*{pesan}</b></span>
+              }
               <div className="isitabel">
                 <MDBDataTable
                 responsive
@@ -402,15 +462,6 @@ class Device extends Component{
                 data={data}
                 />
               </div> 
-              <div className="kotakisigrafik">
-                <div>
-                  <input name="portss" onChange={this.handleChange} className="inputportssdevice" type="text" placeholder="Port Server ..."></input>
-                </div>&nbsp;&nbsp;
-                <div>
-                  <button className="backgroundbiru" onClick={() => this.start(portss)}>Start</button>&nbsp;
-                  <button className="backgroundmerah" onClick={() => this.stop(portss)}>Stop</button>
-                </div> 
-              </div>
           </div>
       </div>
     )
