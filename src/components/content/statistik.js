@@ -2,7 +2,6 @@ import React,{Component} from 'react';
 import Chart from 'react-google-charts';
 import {Link,withRouter} from 'react-router-dom';
 import get from './config';
-import { array } from 'prop-types';
 
 class Statistik extends Component{
     constructor(props) {
