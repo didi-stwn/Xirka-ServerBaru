@@ -25,8 +25,8 @@ class App extends Component {
                 })
           })
           .then (response =>response.json())  
-          .then (response =>{ console.log(response)
-          if (response.token==="This field is required."){
+          .then (response =>{ 
+          if (response.token===undefined){
             sessionStorage.removeItem("name")
           }
           else{
@@ -49,6 +49,7 @@ class App extends Component {
       else {
         //fungsi untuk memanggil refresh token 1 detik setelah ada sesuatu yang di klik
         setTimeout(function(){refreshToken()},1000)
+        
         //fungsi untuk memanggil refresh token tiap 590 detik sebanyak 6 kali
         // var x=0;
         // var refresh = setInterval(function(){

@@ -100,7 +100,7 @@ class Laporan extends Component{
                     this.setState({datasalah:true})
                     this.setState({isFind:false})
                 }
-                else{
+                else if (response.list.length>0){
                     this.setState({isFind:true})
                     this.setState({nimuser:response.list[0].nim})
                     this.setState({namauser:response.list[0].nama})
@@ -606,7 +606,8 @@ class Laporan extends Component{
                                                 <td className ="laporanno">{i++}</td>
                                                 <td className ="laporanhari">{waktu(isi)}</td>
                                                 <td className ="laporanmasuk">{masuk(isi,isidata)}</td>
-                                                <td className ="laporankeluar">{keluar(isi,isidata)}</td>                                                    <td className ="laporantotal">{total(isi,isidata)}</td>
+                                                <td className ="laporankeluar">{keluar(isi,isidata)}</td>                                                    
+                                                <td className ="laporantotal">{total(isi,isidata)}</td>
                                                 <td className ="laporanalfa">{absen(isi,isidata)}</td>
                                                 <td className ="laporanizin">{izin(isi,isidata)}</td>
                                                 <td className ="laporansakit">{sakit(isi,isidata)}</td>

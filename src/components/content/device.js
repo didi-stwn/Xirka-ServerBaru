@@ -114,8 +114,11 @@ class Device extends Component{
       if (response.detail==="Signature has expired."){
         sessionStorage.removeItem("name")
       }
-      else{
+      else if (response.list.length>0){
         this.setState({isidata:response.list})
+      }
+      else {
+        this.setState({pesan:"list kosong"})
       }
     })
   }
@@ -133,8 +136,11 @@ class Device extends Component{
       if (response.detail==="Signature has expired."){
         sessionStorage.removeItem("name")
       }
-      else{
+      else if (response.list.length>0){
         this.setState({isidata:response.list})
+      }
+      else {
+        this.setState({pesan:"list kosong"})
       }
     })
   }
@@ -191,7 +197,14 @@ class Device extends Component{
             }
           })
           .then (response =>response.json())  
-          .then (response =>this.setState({isidata:response.list}))
+          .then (response =>{
+            if (response.list.length>0){
+              this.setState({isidata:response.list})
+            }
+            else {
+              this.setState({pesan:"list kosong"})
+            }
+          })
         }
         else{
           this.setState({pesan:response.status})
@@ -227,7 +240,14 @@ class Device extends Component{
             }
           })
           .then (response =>response.json())  
-          .then (response =>this.setState({isidata:response.list}))
+          .then (response =>{
+            if (response.list.length>0){
+              this.setState({isidata:response.list})
+            }
+            else {
+              this.setState({pesan:"list kosong"})
+            }
+          })
         }
         else{
           this.setState({pesan:response.status})

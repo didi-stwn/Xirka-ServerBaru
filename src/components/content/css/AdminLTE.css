@@ -3717,9 +3717,10 @@ a:focus {
   }
 }
 .cariidruangan{
+  max-width: 50px;
   margin-top: -58px;
   margin-left: 150px;
-  margin-bottom: 30px
+  margin-bottom: 30px;
 }
 .cari{
   background-color: #E43A34;

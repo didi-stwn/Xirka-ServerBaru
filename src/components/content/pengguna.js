@@ -102,7 +102,7 @@ class Pengguna extends Component{
       if (response.detail==="Signature has expired."){
         sessionStorage.removeItem("name")
       }
-      else{
+      else if (response.list.length>0){
         this.setState({isidata:response.list})
       }
     })
@@ -121,7 +121,7 @@ class Pengguna extends Component{
       if (response.detail==="Signature has expired."){
         sessionStorage.removeItem("name")
       }
-      else{
+      else if (response.list.length>0){
         this.setState({isidata:response.list})
       }
     }) 

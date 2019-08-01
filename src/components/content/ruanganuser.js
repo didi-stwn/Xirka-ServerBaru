@@ -86,7 +86,7 @@ class Ruanganuser extends Component{
           this.setState({pesan:a})
           this.setState({carisalah:true})
         }
-        else if(response.list.length!==0){
+        else if(response.list.length>0){
           this.setState({isidata:response.list})
           this.setState({carisalah:false})
         }

@@ -102,7 +102,7 @@ class Statistik extends Component{
                 this.setState({datasalah:true})
                 this.setState({databenar:false})
             }
-            else{
+            else if (response.list.length>0){
                 this.setState({isidata:response.list})
                 this.setState({datasalah:false})
                 this.setState({databenar:true})
