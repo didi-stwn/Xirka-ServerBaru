@@ -19,7 +19,7 @@ setelah proses clone selesai, sekarang proses install
 
 ketik 
 
-`npm install` 
+`sudo npm install` 
 
 ![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/npminstall.png)
 
