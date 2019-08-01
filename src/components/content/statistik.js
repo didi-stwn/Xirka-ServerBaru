@@ -92,7 +92,7 @@ class Statistik extends Component{
             })
         })
         .then (response =>response.json())  
-        .then (response =>{ 
+        .then (response =>{
             if (response.detail==="Signature has expired."){
                 sessionStorage.removeItem("name")
             }
@@ -151,7 +151,6 @@ class Statistik extends Component{
                 }
             }
         }
-        console.log(arraybaru)
         //mendapatkan jumlah checkin
         for (var i=0; i<getRangeDate.length; i++){
             var date=new Date(getRangeDate[i])
@@ -246,7 +245,6 @@ class Statistik extends Component{
                 }
             }
         }
-        console.log(inputstatus)
 
         if (parseInt(inputstatus)===0){
             for (var j=0; j<24; j++){
@@ -260,7 +258,6 @@ class Statistik extends Component{
             }
             jumlahcheckin=0;
         }
-        console.log(jumlahcheckin)
 
         const datagrafik = [
             ['Jumlah', ' Check In', 'Check Out'],

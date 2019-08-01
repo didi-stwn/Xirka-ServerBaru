@@ -92,7 +92,7 @@ class Laporan extends Component{
             })
             })
             .then (response =>response.json())  
-            .then (response =>{ console.log(response)
+            .then (response =>{ 
                 if (response.detail==="Signature has expired."){
                     sessionStorage.removeItem("name")
                 }

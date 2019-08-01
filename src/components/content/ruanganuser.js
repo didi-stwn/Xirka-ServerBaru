@@ -71,7 +71,7 @@ class Ruanganuser extends Component{
       })
       })
       .then (response =>response.json())  
-      .then (response =>{
+      .then (response =>{ 
         if (response.status==="room not exists"){
           this.setState({isidata:[]})
           this.setState({pesan:response.status})

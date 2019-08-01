@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './img/logo.png';
 import get from './config';
+import {Route, Redirect, withRouter} from "react-router-dom";
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -9,6 +10,7 @@ export default class Login extends React.Component {
             username: '',
             password: '',
             gagal:false,
+            isLogin:false,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -40,13 +42,13 @@ export default class Login extends React.Component {
                 sessionStorage.setItem("name",response.token)
                 var a=JSON.parse(atob(sessionStorage.name.split(".")[1])).user_id
                 sessionStorage.setItem("user",a)
-                window.location.reload()
+                this.setState({isLogin:true})
             }
-            
         })
     }
     
     render(){
+        const {isLogin} = this.state
         document.title="Login"
         const {gagal} = this.state;
         return (
@@ -81,6 +83,10 @@ export default class Login extends React.Component {
                         </button>
                     </form>
                 </div>
+                {
+                    isLogin &&
+                    <Redirect to="/" />
+                }
             </div>
         )
     } 

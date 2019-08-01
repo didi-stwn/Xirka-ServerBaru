@@ -25,7 +25,7 @@ class App extends Component {
                 })
           })
           .then (response =>response.json())  
-          .then (response =>{
+          .then (response =>{ console.log(response)
           if (response.token==="This field is required."){
             sessionStorage.removeItem("name")
           }

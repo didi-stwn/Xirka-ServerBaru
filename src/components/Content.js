@@ -23,19 +23,6 @@ class Content extends Component {
               className="switch-route"
             >
               <Route exact path="/" component={Home} />
-              <Route path="/login" render={()=>
-                <div className="box-footer">
-                  You're Logged In
-                  <br></br>
-                  <br></br>
-                  Go to
-                  <Link className="kotakgotohome" to="/">
-                    <div className="gotohome">
-                      <span>Home
-                      </span>
-                    </div> 
-                  </Link>
-                </div>} />
               <Route path="/statistik" render={ () => <Statistik/> } />
               <Route path="/logpintu" render={ () => <Logpintu/> } />
               <Route path="/pengguna" render={ () => <Pengguna/> } />

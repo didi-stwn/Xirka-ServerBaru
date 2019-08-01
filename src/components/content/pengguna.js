@@ -117,7 +117,7 @@ class Pengguna extends Component{
       }
     })
     .then (response =>response.json())  
-    .then (response =>{
+    .then (response =>{ 
       if (response.detail==="Signature has expired."){
         sessionStorage.removeItem("name")
       }
