@@ -1,59 +1,56 @@
-berikut merupakan tatacara untuk mendownload file dan mengedit file sekaligus mengubah data di server secara otomatis:
+# Cara Instalasi 
 
-1. [Clone Project](#Clone-Project)
-2. [Edit Project](#Edit-Project)
-3. [Push Project](#Push-Project)
-4. [Pull Project](#Pull-Project)
-
-
-## Clone Project
 clone project dengan cara berikut ini: (dengan terminal pada ubuntu)
 
 pilih direktori untuk tempat penyimpanan file
 lalu klik kanan dan buka terminal dengan klik "Open in Terminal"
 lalu ketik 
 
-`git clone https://github.com/didi-stwn/Xirka-FrontEnd.git`
+`git clone https://github.com/didi-stwn/Xirka-ServerBaru.git`
 
 lalu terminal akan secara otomatis mendownload file yang ada di GitHub
 setelah file selesai diClone, masuk ke direktori folder yang baru di download 
 
-`cd Xirka-FrontEnd`
+`cd Xirka-ServerBaru`
 
-atau close terminal lalu buka folder `Xirka-FrontEnd` yang berhasil dibuat tadi
+atau close terminal lalu buka folder `Xirka-ServerBaru` yang berhasil dibuat tadi
 
+setelah proses clone selesai, sekarang proses install
 
-## Edit Project
-buka Visual Studio Code (text editor bebas) lalu buka file direktori `Xirka-FrontEnd` tadi.
+ketik 
 
-untuk menjalankan projectnya dapat dilakukan dengan mengetik 
+`npm install` 
 
- `npm start`
+![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/npminstall.png)
 
-pada terminal yang sudah berada pada direktori folder `Xirka-FrontEnd` 
+untuk menginstall node_modules, tunggu beberapa saat hingga proses selesai.
 
-lalu dapat dilakukan pengeditan pada file dan browser akan otomatis merefresh saat file di save
+lalu ketik 
 
+`npm start` 
 
-## Push Project
-setelah file selesai diedit push data ke GitHub dengan cara 
+![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/npm%20start.png)
 
-buka terminal pada direktori `Xirka-FrontEnd`
+untuk memulai memasang pada server
 
-lalu ketik
+lalu akan ditemukan error sebagai berikut:
 
-`git commit -m "pesan perubahan"`
+![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/errorods.png)
 
-kemudian ketik
+lalu buka folder tempat error berada `./node_modules/tempa-xlsx/`
 
-`git push`
+![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/odsjs.png)
 
-lalu masukkan username dan password GitHubnya 
+kemudian hapus isi file `ods.js` atau buat file document baru bernama `ods.js` sehingga isi dari `ods.js` kosong seperti dibawah ini
 
+![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/filekosong.png)
 
-## Pull Project
-buka direktori folder `Xirka-FrontEnd` lalu buka terminal dan ketik
+kemudian balik ke direktori 
 
-`git pull`
+`./Xirka-ServerBaru`
 
-terminal akan otomatis merubah perubahan yang ada difile
+lalu ketik 
+
+`npm start`
+
+lalu tunggu beberapa saat dan buka browser lalu buka buka localhost:8000 atau ip berdasarkan PCnya
