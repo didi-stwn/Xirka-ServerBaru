@@ -6,14 +6,14 @@ pilih direktori untuk tempat penyimpanan file
 lalu klik kanan dan buka terminal dengan klik "Open in Terminal"
 lalu ketik 
 
-`git clone https://github.com/didi-stwn/Xirka-FrontEnd.git`
+`git clone https://github.com/didi-stwn/Xirka-ServerBaru.git`
 
 lalu terminal akan secara otomatis mendownload file yang ada di GitHub
 setelah file selesai diClone, masuk ke direktori folder yang baru di download 
 
-`cd Xirka-FrontEnd`
+`cd Xirka-ServerBaru`
 
-atau close terminal lalu buka folder `Xirka-FrontEnd` yang berhasil dibuat tadi
+atau close terminal lalu buka folder `Xirka-ServerBaru` yang berhasil dibuat tadi
 
 setelah proses clone selesai, sekarang proses install
 
@@ -47,7 +47,7 @@ kemudian hapus isi file `ods.js` atau buat file document baru bernama `ods.js` s
 
 kemudian balik ke direktori 
 
-`./Xirka-FrontEnd`
+`./Xirka-ServerBaru`
 
 lalu ketik 
 
