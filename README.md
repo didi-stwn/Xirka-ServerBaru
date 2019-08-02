@@ -69,3 +69,26 @@ tunggu hingga proses selesai. setelah selesai akan terbentuk folder baru bernama
 
 file build sudah selesai dibuat, kemudian langkah berikutnya disesuaikan dengan web browser yang diinginkan seperti nginx, apache dan sebagainya
 
+### untuk nginx sourcenya sebagai berikut 
+
+buka direktori `/etc/nginx/sites-available` lalu buat file baru (namanya bebas) dan isinya sebagai berikut 
+
+```
+server {
+  listen 80;
+  root /home/xirka/server_magang/Xirka-ServerBaru/build
+  server_name [domain.com];
+  index index.html index.htm;
+  location / {
+    try_files $uri /index.html
+  }
+}
+```
+
+lalu link ke sites-enable dengan perintah
+
+`sudo ln -s /etc/nginx/sites-available/[namafile] /etc/nginx/sites-enabled/`
+
+lalu restart nginx dengan perintah 
+
+`sudo service nginx restart`
