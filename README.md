@@ -54,3 +54,18 @@ lalu ketik
 `npm start`
 
 lalu tunggu beberapa saat dan buka browser lalu buka buka localhost:8000 atau ip berdasarkan PCnya
+
+
+
+# Cara Build
+
+jika perintah `npm start ` dapat berjalan dengan baik, maka langkah berikutnya adalah build project yang kemudian akan dipasang di webservernya
+
+pertama, buka direktori tempat clone berada lalu ketik
+
+`sudo npm run build`
+
+tunggu hingga proses selesai. setelah selesai akan terbentuk folder baru bernama `build`
+
+file build sudah selesai dibuat, kemudian langkah berikutnya disesuaikan dengan web browser yang diinginkan seperti nginx, apache dan sebagainya
+
