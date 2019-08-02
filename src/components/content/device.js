@@ -55,7 +55,10 @@ class Device extends Component{
     })
     .then(response => response.json())
     .then(response => {
-      if (response.status==="created"){
+      if (response.detail==="Authentication credentials were not provided."){
+        sessionStorage.removeItem("name")
+      }
+      else if (response.status==="created"){
         this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
@@ -88,7 +91,10 @@ class Device extends Component{
     })
     .then(response => response.json())
     .then(response =>{
-      if (response.status==="updated"){
+      if (response.detail==="Authentication credentials were not provided."){
+        sessionStorage.removeItem("name")
+      }
+      else if (response.status==="updated"){
         this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
@@ -111,14 +117,11 @@ class Device extends Component{
     })
     .then (response =>response.json())  
     .then (response =>{
-      if (response.detail==="Signature has expired."){
+      if (response.detail==="Authentication credentials were not provided."){
         sessionStorage.removeItem("name")
       }
-      else if (response.list.length>0){
+      else{
         this.setState({isidata:response.list})
-      }
-      else {
-        this.setState({pesan:"list kosong"})
       }
     })
   }
@@ -133,14 +136,11 @@ class Device extends Component{
     })
     .then (response =>response.json())  
     .then (response =>{
-      if (response.detail==="Signature has expired."){
+      if (response.detail==="Authentication credentials were not provided."){
         sessionStorage.removeItem("name")
       }
-      else if (response.list.length>0){
+      else{
         this.setState({isidata:response.list})
-      }
-      else {
-        this.setState({pesan:"list kosong"})
       }
     })
   }
@@ -161,7 +161,10 @@ class Device extends Component{
       })
       .then (response => response.json())
       .then(response=>{ 
-        if (response.status==="deleted"){
+        if (response.detail==="Authentication credentials were not provided."){
+          sessionStorage.removeItem("name")
+        }
+        else if (response.status==="deleted"){
           window.alert(response.status)
         }
         else{
@@ -185,7 +188,10 @@ class Device extends Component{
       })
       .then(response => response.json())
       .then(response=>{
-        if(response.status==="started"){
+        if (response.detail==="Authentication credentials were not provided."){
+          sessionStorage.removeItem("name")
+        }
+        else if(response.status==="started"){
           this.setState({pesan:response.status})
           this.setState({portssbenar:true})
           this.setState({portsssalah:false})
@@ -198,11 +204,11 @@ class Device extends Component{
           })
           .then (response =>response.json())  
           .then (response =>{
-            if (response.list.length>0){
-              this.setState({isidata:response.list})
+            if (response.detail==="Authentication credentials were not provided."){
+              sessionStorage.removeItem("name")
             }
-            else {
-              this.setState({pesan:"list kosong"})
+            else{
+              this.setState({isidata:response.list})
             }
           })
         }
@@ -228,7 +234,10 @@ class Device extends Component{
       })
       .then(response => response.json())
       .then(response=>{
-        if((response.status==="stopped")||(response.status==="[Errno 3] No such process")){
+        if (response.detail==="Authentication credentials were not provided."){
+          sessionStorage.removeItem("name")
+        }
+        else if((response.status==="stopped")||(response.status==="[Errno 3] No such process")){
           this.setState({pesan:response.status})
           this.setState({portssbenar:true})
           this.setState({portsssalah:false})
@@ -241,11 +250,11 @@ class Device extends Component{
           })
           .then (response =>response.json())  
           .then (response =>{
-            if (response.list.length>0){
-              this.setState({isidata:response.list})
+            if (response.detail==="Authentication credentials were not provided."){
+              sessionStorage.removeItem("name")
             }
-            else {
-              this.setState({pesan:"list kosong"})
+            else{
+              this.setState({isidata:response.list})
             }
           })
         }

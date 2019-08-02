@@ -93,7 +93,7 @@ class Statistik extends Component{
         })
         .then (response =>response.json())  
         .then (response =>{
-            if (response.detail==="Signature has expired."){
+            if (response.detail==="Authentication credentials were not provided."){
                 sessionStorage.removeItem("name")
             }
             else if(response.list.length===0){
@@ -102,7 +102,7 @@ class Statistik extends Component{
                 this.setState({datasalah:true})
                 this.setState({databenar:false})
             }
-            else if (response.list.length>0){
+            else{
                 this.setState({isidata:response.list})
                 this.setState({datasalah:false})
                 this.setState({databenar:true})

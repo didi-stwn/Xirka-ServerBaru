@@ -26,7 +26,7 @@ class App extends Component {
           })
           .then (response =>response.json())  
           .then (response =>{ 
-          if (response.token===undefined){
+          if (response.non_field_errors==="Signature has expired."){
             sessionStorage.removeItem("name")
           }
           else{
@@ -48,7 +48,7 @@ class App extends Component {
       //kalau token ada
       else {
         //fungsi untuk memanggil refresh token 1 detik setelah ada sesuatu yang di klik
-        setTimeout(function(){refreshToken()},1000)
+        setTimeout(function(){refreshToken()},10)
         
         //fungsi untuk memanggil refresh token tiap 590 detik sebanyak 6 kali
         // var x=0;

@@ -46,7 +46,10 @@ class Ruangan extends Component{
     })
     .then(response => response.json())
     .then(response => {
-      if (response.status==="created"){
+      if (response.detail==="Authentication credentials were not provided."){
+        sessionStorage.removeItem("name")
+      }
+      else if (response.status==="created"){
         this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
@@ -76,7 +79,10 @@ class Ruangan extends Component{
     })
     .then(response => response.json())
     .then(response =>{
-      if (response.status==="updated"){
+      if (response.detail==="Authentication credentials were not provided."){
+        sessionStorage.removeItem("name")
+      }
+      else if (response.status==="updated"){
         this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
@@ -99,10 +105,10 @@ class Ruangan extends Component{
     })
     .then (response =>response.json())  
     .then (response =>{
-      if (response.detail==="Signature has expired."){
+      if (response.detail==="Authentication credentials were not provided."){
         sessionStorage.removeItem("name")
       }
-      else if (response.list.length>0){
+      else{
         this.setState({isidata:response.list})
       }
     })
@@ -118,10 +124,10 @@ class Ruangan extends Component{
     })
     .then (response =>response.json())  
     .then (response =>{
-      if (response.detail==="Signature has expired."){
+      if (response.detail==="Authentication credentials were not provided."){
         sessionStorage.removeItem("name")
       }
-      else if (response.list.length>0){
+      else{
         this.setState({isidata:response.list})
       }
     })
@@ -143,7 +149,10 @@ class Ruangan extends Component{
       })
       .then (response => response.json())
       .then(response=>{
-        if (response.status==="deleted"){
+        if (response.detail==="Authentication credentials were not provided."){
+          sessionStorage.removeItem("name")
+        }
+        else if (response.status==="deleted"){
           window.alert(response.status)
         }
         else{

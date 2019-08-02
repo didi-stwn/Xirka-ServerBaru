@@ -93,14 +93,14 @@ class Laporan extends Component{
             })
             .then (response =>response.json())  
             .then (response =>{ 
-                if (response.detail==="Signature has expired."){
+                if (response.detail==="Authentication credentials were not provided."){
                     sessionStorage.removeItem("name")
                 }
                 else if (response.list.length===0){
                     this.setState({datasalah:true})
                     this.setState({isFind:false})
                 }
-                else if (response.list.length>0){
+                else{
                     this.setState({isFind:true})
                     this.setState({nimuser:response.list[0].nim})
                     this.setState({namauser:response.list[0].nama})

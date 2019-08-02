@@ -44,7 +44,10 @@ class Ruanganuser extends Component{
     })
     .then(response=>response.json())
     .then(response => {
-      if (response.status==="created"){
+      if (response.detail==="Authentication credentials were not provided."){
+        sessionStorage.removeItem("name")
+      }
+      else if (response.status==="created"){
         this.setState({pesan:response.status})
         this.setState({databenar:true})
         this.setState({datasalah:false})
@@ -72,7 +75,10 @@ class Ruanganuser extends Component{
       })
       .then (response =>response.json())  
       .then (response =>{ 
-        if (response.status==="room not exists"){
+        if (response.detail==="Authentication credentials were not provided."){
+          sessionStorage.removeItem("name")
+        }
+        else if (response.status==="room not exists"){
           this.setState({isidata:[]})
           this.setState({pesan:response.status})
           this.setState({carisalah:true})
@@ -86,7 +92,7 @@ class Ruanganuser extends Component{
           this.setState({pesan:a})
           this.setState({carisalah:true})
         }
-        else if(response.list.length>0){
+        else{
           this.setState({isidata:response.list})
           this.setState({carisalah:false})
         }
@@ -113,7 +119,10 @@ class Ruanganuser extends Component{
       })
       .then (response => response.json())
       .then(response=>{
-        if (response.status==="deleted"){
+        if (response.detail==="Authentication credentials were not provided."){
+          sessionStorage.removeItem("name")
+        }
+        else if (response.status==="deleted"){
           window.alert(response.status)
         }
         else{
