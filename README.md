@@ -53,7 +53,7 @@ lalu ketik
 
 `npm start`
 
-lalu tunggu beberapa saat dan buka browser lalu buka buka localhost:8000 atau ip berdasarkan PCnya
+lalu tunggu beberapa saat dan buka browser lalu buka buka localhost:8080 atau ip berdasarkan PCnya
 
 
 
