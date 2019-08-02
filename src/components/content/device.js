@@ -120,7 +120,7 @@ class Device extends Component{
       if (response.detail==="Authentication credentials were not provided."){
         sessionStorage.removeItem("name")
       }
-      else{
+      else if (response.list!==undefined){
         this.setState({isidata:response.list})
       }
     })
@@ -139,7 +139,7 @@ class Device extends Component{
       if (response.detail==="Authentication credentials were not provided."){
         sessionStorage.removeItem("name")
       }
-      else{
+      else if (response.list!==undefined){
         this.setState({isidata:response.list})
       }
     })
@@ -207,7 +207,7 @@ class Device extends Component{
             if (response.detail==="Authentication credentials were not provided."){
               sessionStorage.removeItem("name")
             }
-            else{
+            else if (response.list!==undefined){
               this.setState({isidata:response.list})
             }
           })
@@ -253,7 +253,7 @@ class Device extends Component{
             if (response.detail==="Authentication credentials were not provided."){
               sessionStorage.removeItem("name")
             }
-            else{
+            else if (response.list!==undefined){
               this.setState({isidata:response.list})
             }
           })

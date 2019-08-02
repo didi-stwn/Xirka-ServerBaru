@@ -96,16 +96,18 @@ class Statistik extends Component{
             if (response.detail==="Authentication credentials were not provided."){
                 sessionStorage.removeItem("name")
             }
-            else if(response.list.length===0){
-                var a="user not exists"
-                this.setState({pesan:a})
-                this.setState({datasalah:true})
-                this.setState({databenar:false})
-            }
-            else{
-                this.setState({isidata:response.list})
-                this.setState({datasalah:false})
-                this.setState({databenar:true})
+            else if (response.list!==undefined){
+                if(response.list.length===0){
+                    var a="user not exists"
+                    this.setState({pesan:a})
+                    this.setState({datasalah:true})
+                    this.setState({databenar:false})
+                }
+                else {
+                    this.setState({isidata:response.list})
+                    this.setState({datasalah:false})
+                    this.setState({databenar:true})
+                }
             }
         })
         function getDateArray(start, end) {

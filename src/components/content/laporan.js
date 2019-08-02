@@ -100,7 +100,7 @@ class Laporan extends Component{
                     this.setState({datasalah:true})
                     this.setState({isFind:false})
                 }
-                else{
+                else if (response.list!==undefined){
                     this.setState({isFind:true})
                     this.setState({nimuser:response.list[0].nim})
                     this.setState({namauser:response.list[0].nama})

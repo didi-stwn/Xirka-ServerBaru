@@ -87,14 +87,16 @@ class Ruanganuser extends Component{
           this.setState({pesan:response.status})
           this.setState({carisalah:true})
         }
-        else if(response.list.length===0){
-          var a="user not exists"
-          this.setState({pesan:a})
-          this.setState({carisalah:true})
-        }
-        else{
-          this.setState({isidata:response.list})
-          this.setState({carisalah:false})
+        else if (response.list!==undefined){
+          if(response.list.length===0){
+            var a="user not exists"
+            this.setState({pesan:a})
+            this.setState({carisalah:true})
+          }
+          else{
+            this.setState({isidata:response.list})
+            this.setState({carisalah:false})
+          }
         }
       })
     }
