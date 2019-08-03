@@ -144,6 +144,7 @@ Ini isi index.html, jadi dia ada div dengan id root, dimana id root ini akan di 
 
 
 berikut isi index.jsnya
+
 ![alt text](https://github.com/didi-stwn/Xirka-FrontEnd/blob/master/screenshoot/index.js.png)
 
 maksud ReactDOM.render yaitu menjalankan App dari app.js yang dimasukan ke id root yang ada di index.htmlnya
