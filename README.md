@@ -117,6 +117,17 @@ Berikut beberapa hal yang diperlukan untuk dapat mengcode React JS
 
 9. untuk membuildnya dapat dilakukan perintah `sudo npm run build`
 
+10. untuk mengubah port dapat dilakukan pengeditan pada file package.json pada bagian scriptnya dengan menambahkan PORT=[port yang diinginkan] pada start, berikut untuk port 8000
+
+```
+"scripts": {
+    "start": "PORT=8000 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  ```
+
 
 Berikut beberapa komponen penting dalam react
 
