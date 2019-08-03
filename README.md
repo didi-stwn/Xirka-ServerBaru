@@ -76,7 +76,7 @@ buka direktori `/etc/nginx/sites-available` lalu buat file baru (namanya bebas) 
 ```
 server {
   listen 80;
-  root /home/xirka/server_magang/Xirka-ServerBaru/build
+  root /home/xirka/server_magang/Xirka-ServerBaru/build     //tempat direktori build berada
   server_name [domain.com];
   index index.html index.htm;
   location / {
